@@ -14,9 +14,9 @@ export const SectionPage: React.FC = () => {
 
   const index = anchors.findIndex((a) => a === slug);
   const section = index >= 0 ? sections[index] : undefined;
-  const isHero = section?.type === 'custom' && section.config.variant === 'hero';
+  const isHomeOnly = section?.type === 'custom' && (section.config.variant === 'hero' || section.config.variant === 'about');
 
-  if (!section || isHero) {
+  if (!section || isHomeOnly) {
     return (
       <div className="page-not-found">
         <Link className="page-back" to="/">← back home</Link>

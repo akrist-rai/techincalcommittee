@@ -42,31 +42,31 @@ export const CLUBS: ClubSeed[] = [
     name: 'Coding Club', slug: 'coding-club', accent: 'cyan',
     tagline: 'writes code. argues about tabs vs spaces.',
     description: 'weekly problems, occasional working solutions, and a group chat that is 40% debugging and 60% memes about debugging.',
-    img_url: '',
+    img_url: '/library/0xbg002w.jpeg',
   },
   {
     name: 'Enigma', slug: 'enigma', accent: 'violet',
     tagline: 'cryptic by name, slightly less cryptic in practice.',
     description: 'puzzles, ciphers, and the kind of logic problems that ruin your weekend in a good way. bring snacks, leave with a headache.',
-    img_url: '',
+    img_url: '/library/0xep074p.jpeg',
   },
   {
     name: '9 Bits', slug: '9-bits', accent: 'yellow',
     tagline: 'one bit short of a byte, on purpose.',
     description: 'low-level tinkering, hardware experiments, and things that occasionally smell faintly of solder. rarely catches fire. rarely.',
-    img_url: '',
+    img_url: '/library/0xbg004w.jpeg',
   },
   {
     name: 'FNC', slug: 'fnc', accent: 'green',
     tagline: 'ask a member what it stands for. results vary.',
     description: 'self-explanatory to absolutely no one outside the club. we are, allegedly, working on a better description than this one.',
-    img_url: '',
+    img_url: '/library/0xac003p.jpeg',
   },
   {
     name: 'Arcadia', slug: 'arcadia', accent: 'red',
     tagline: 'games, mostly. some of them even finished.',
     description: 'game dev, game jams, and long-running debates about whether "Among Us" counts as research. it does not. we still debate it.',
-    img_url: '',
+    img_url: '/library/0xac005p.jpeg',
   },
 ];
 
@@ -180,7 +180,7 @@ export const SECTIONS: SectionSeed[] = [
   {
     type: 'custom', title: 'About', subtitle: 'who we are, roughly.', accent: 'cyan',
     config: {
-      variant: 'panel',
+      variant: 'about',
       eyebrow: 'THE PITCH',
       heading: 'WHAT WE ACTUALLY DO',
       body: 'short version: we build things, break them in new and exciting ways, then build them again slightly better. workshops when someone volunteers to run one, hackathons when someone’s brave enough to organize one, and a lot of debugging over shared screens at hours we don’t mention to our parents. no prior experience required — just google the error message before you ask the group chat.',

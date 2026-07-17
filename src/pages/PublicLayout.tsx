@@ -3,7 +3,7 @@ import { Outlet } from 'react-router-dom';
 import { SiteDataProvider, useSiteData } from '../lib/site-data-context';
 import { Nav, type PageNavLink } from '../components/Nav';
 
-const NAV_EXCLUDED_VARIANTS = new Set(['hero']);
+const NAV_EXCLUDED_VARIANTS = new Set(['hero', 'about']);
 
 const PublicLayoutInner: React.FC = () => {
   const { sections, anchors, error } = useSiteData();

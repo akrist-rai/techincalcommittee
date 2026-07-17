@@ -168,9 +168,12 @@ const ClubsSectionView: React.FC<{ section: ClubsSection; fileNo: number }> = ({
           <Link
             key={c.id}
             to={`/club/${c.slug}`}
-            className="teaser-card"
+            className={`teaser-card${c.img_url ? ' teaser-card--img' : ''}`}
             style={{ '--card-accent': `var(--${c.accent})` } as React.CSSProperties}
           >
+            {c.img_url && (
+              <div className="teaser-card-img"><img src={c.img_url} alt="" /></div>
+            )}
             <span className="teaser-eyebrow">{(c.members?.length ?? 0)} MEMBER{(c.members?.length ?? 0) === 1 ? '' : 'S'}</span>
             <div className="teaser-title mg-sfx">{c.name}</div>
             {c.tagline && <p className="teaser-sub">{c.tagline}</p>}

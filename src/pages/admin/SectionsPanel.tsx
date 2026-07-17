@@ -23,7 +23,8 @@ function toDraft(s: Section): Draft {
 }
 
 const NEW_SECTION_DEFAULTS: Record<SectionType, Draft> = {
-  members: { type: 'members', title: 'The Club', subtitle: '', visible: true, accent: 'violet', config: {} },
+  clubs: { type: 'clubs', title: 'Clubs', subtitle: '', visible: true, accent: 'violet', config: {} },
+  members: { type: 'members', title: 'Roster', subtitle: '', visible: true, accent: 'violet', config: {} },
   events: { type: 'events', title: 'Roadmap', subtitle: '', visible: true, accent: 'yellow', config: {} },
   stats: {
     type: 'stats', title: 'Stats', subtitle: '', visible: true, accent: 'cyan',
@@ -36,6 +37,7 @@ const NEW_SECTION_DEFAULTS: Record<SectionType, Draft> = {
 };
 
 const TYPE_LABELS: Record<SectionType, string> = {
+  clubs: 'Clubs grid',
   members: 'Members grid',
   events: 'Event timeline',
   stats: 'Stats & badges',
@@ -64,6 +66,9 @@ function SectionEditor({ draft, onChange }: { draft: Draft; onChange: (d: Draft)
         </label>
       </div>
 
+      {draft.type === 'clubs' && (
+        <p className="admin-hint">This section shows every club as a card — manage the actual clubs under the Clubs tab.</p>
+      )}
       {(draft.type === 'members' || draft.type === 'events') && (
         <p className="admin-hint">
           This section shows the full {draft.type === 'members' ? 'roster' : 'timeline'} — manage the actual
@@ -100,11 +105,12 @@ function SectionEditor({ draft, onChange }: { draft: Draft; onChange: (d: Draft)
                 onChange={(e) => onChange({ ...draft, config: { ...config, variant: e.target.value } })}
               >
                 <option value="panel">Panel (freeform)</option>
+                <option value="about">About (shown on Home, not its own page)</option>
                 <option value="hero">Hero (cover)</option>
                 <option value="cta">CTA (finale)</option>
               </select>
             </label>
-            {config.variant === 'panel' && (
+            {(config.variant === 'panel' || config.variant === 'about') && (
               <label className="admin-field">
                 <span>Layout</span>
                 <select

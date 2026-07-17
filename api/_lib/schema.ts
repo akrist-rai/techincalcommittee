@@ -64,7 +64,7 @@ const buttonSchema = z.object({
 });
 
 export const customConfigSchema = z.object({
-  variant: z.enum(['panel', 'hero', 'cta']).default('panel'),
+  variant: z.enum(['panel', 'hero', 'cta', 'about']).default('panel'),
   eyebrow: z.string().trim().max(120).optional(),
   heading: z.string().trim().max(200).default(''),
   body: z.string().trim().max(2000).default(''),

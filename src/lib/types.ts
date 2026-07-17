@@ -64,7 +64,7 @@ export interface SectionButton {
 }
 
 export interface CustomConfig {
-  variant: 'panel' | 'hero' | 'cta';
+  variant: 'panel' | 'hero' | 'cta' | 'about';
   eyebrow?: string;
   heading: string;
   body: string;

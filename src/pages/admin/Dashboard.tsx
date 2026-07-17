@@ -3,6 +3,7 @@ import { NavLink, Route, Routes } from 'react-router-dom';
 import { useAuth } from '../../lib/auth-context';
 import { ProtectedRoute } from '../../components/ProtectedRoute';
 import { SectionsPanel } from './SectionsPanel';
+import { ClubsPanel } from './ClubsPanel';
 import { MembersPanel } from './MembersPanel';
 import { EventsPanel } from './EventsPanel';
 import { MediaPanel } from './MediaPanel';
@@ -18,6 +19,9 @@ export const Dashboard: React.FC = () => {
         <nav className="admin-nav">
           <NavLink to="/admin" end className={({ isActive }) => `admin-nav-link${isActive ? ' active' : ''}`}>
             Sections
+          </NavLink>
+          <NavLink to="/admin/clubs" className={({ isActive }) => `admin-nav-link${isActive ? ' active' : ''}`}>
+            Clubs
           </NavLink>
           <NavLink to="/admin/members" className={({ isActive }) => `admin-nav-link${isActive ? ' active' : ''}`}>
             Members
@@ -49,6 +53,7 @@ export const Dashboard: React.FC = () => {
       <main className="admin-main">
         <Routes>
           <Route index element={<SectionsPanel />} />
+          <Route path="clubs" element={<ClubsPanel />} />
           <Route path="members" element={<MembersPanel />} />
           <Route path="events" element={<EventsPanel />} />
           <Route path="media" element={<MediaPanel />} />

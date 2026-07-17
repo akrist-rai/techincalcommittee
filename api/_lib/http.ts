@@ -46,3 +46,19 @@ export function getIdParam(req: VercelRequest): string {
   }
   return id;
 }
+
+// For catch-all routes (api/x/[[...params]].ts), which collapse an index +
+// [id] (+ extra sub-routes) into one Vercel Function — Hobby plans cap
+// deployments at 12 functions, so resources share one file per verb group.
+//
+// Two dev-server quirks this works around:
+// 1. `vercel dev` (as of CLI 56.x) puts the value under the literal query key
+//    "[...params]" (brackets included), not "params" — check both.
+// 2. `[[...params]]` matching the bare parent path (zero segments) isn't
+//    reliable locally, so vercel.json rewrites bare resource paths (e.g.
+//    /api/members) to /api/members/_root; that sentinel is stripped here.
+export function getCatchAllParams(req: VercelRequest): string[] {
+  const params = req.query.params ?? req.query['[...params]'];
+  const list = !params ? [] : Array.isArray(params) ? params : [params];
+  return list[0] === '_root' ? list.slice(1) : list;
+}

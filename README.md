@@ -1,54 +1,123 @@
-# Technical Committee — standalone site
+# Technical Committee — manga site + CMS
 
-A small React + Vite landing page for the Technical Committee, decoupled from
-the main Ephemeral app. Its only job is to look good and point people at
-[ephemeral-v2-1.vercel.app](https://ephemeral-v2-1.vercel.app).
+A React + Vite site for the Technical Committee, styled like a manga volume
+(continuous panel-scroll, halftone/screentone textures, chapter-index framing)
+with a real backend: Neon Postgres, cookie-based auth with per-member accounts,
+and an admin panel at `/admin` where editors can rewrite content and add,
+remove, and reorder page sections without touching code.
 
-## Uploading to GitHub (web UI, no git command line)
+## Stack
 
-1. Go to [github.com/new](https://github.com/new) and create a new **empty**
-   repository (don't check "Add a README" — you're uploading your own files).
-2. Open the new repo, click **Add file → Upload files**.
-3. Drag in everything from this `committee-site` folder **except**:
-   - `node_modules/` — never upload this, it's huge and gets reinstalled automatically
-   - `dist/` — this is a local build output, Vercel builds its own copy
-   - `package-lock.json` is fine to include (recommended, keeps installs reproducible)
+- **Frontend**: Vite + React + TypeScript, `react-router-dom` for `/` (public site) and `/admin/*`.
+- **Backend**: Vercel Serverless Functions under `api/*.ts` — no separate server to host.
+- **Database**: Neon Postgres via `@neondatabase/serverless`.
+- **Auth**: email + password, bcrypt hashing, DB-backed sessions in an `httpOnly` cookie (not stateless JWT, so access can be revoked instantly).
+- **Images**: Vercel Blob for uploads; a curated ~60-image art library is seeded in as a starting media library.
 
-   So you should be dragging: `public/`, `src/`, `index.html`, `package.json`,
-   `package-lock.json`, `tsconfig.json`, `vite.config.ts`, `.gitignore`.
-4. Scroll down, write a commit message (e.g. "initial commit"), and click
-   **Commit changes**.
+## One-time setup
 
-Tip: if your browser lets you drag a whole folder at once, you can drag the
-`public` folder and `src` folder in directly — GitHub's upload page preserves
-folder structure. `node_modules` and `dist` are the only two to leave out.
+You'll need a [Neon](https://neon.tech) project and a [Vercel](https://vercel.com) project with Blob storage enabled. Both have free tiers that are plenty for this.
 
-## Deploying to Vercel
+1. **Install dependencies**
 
-1. Go to [vercel.com/new](https://vercel.com/new) and sign in.
-2. Click **Import** next to the GitHub repo you just created.
-3. Vercel auto-detects the **Vite** framework preset — build command
-   `vite build`, output directory `dist`. You shouldn't need to change anything.
-4. Click **Deploy**. A couple minutes later you'll have a live URL like
-   `your-repo-name.vercel.app`.
+   ```bash
+   npm install
+   ```
 
-Want a custom domain instead of the `*.vercel.app` one? Add it afterwards
-under the project's **Settings → Domains**.
+2. **Create a Neon project** at [neon.tech](https://neon.tech), then copy the **pooled** connection string (Neon dashboard → Connect → Pooled connection).
 
-## Before you deploy
+3. **Set up your env file**
 
-The "Enter Ephemeral" / "Apply to Join" buttons point at
-`https://ephemeral-v2-1.vercel.app`, hardcoded as `EPHEMERAL_URL` at the top
-of [`src/App.tsx`](src/App.tsx). Double-check that URL is actually live
-before you publicize this page — if it's wrong, change it there and re-upload
-(or just edit the file directly on GitHub and Vercel will redeploy
-automatically).
+   ```bash
+   cp .env.example .env
+   ```
 
-## Testing locally first (optional)
+   Fill in `DATABASE_URL` with the Neon connection string. Pick your own
+   `ADMIN_EMAIL` / `ADMIN_BOOTSTRAP_PASSWORD` — these create the first admin
+   login (change the password from the admin panel afterward).
+
+4. **Create the database schema, then seed starter content**
+
+   ```bash
+   npm run db:migrate
+   npm run db:seed
+   ```
+
+   The seed is idempotent per-table — re-running it won't duplicate members,
+   events, or sections that already exist, and won't overwrite the bootstrap
+   admin's password if that account already exists.
+
+5. **Enable Vercel Blob storage** on your Vercel project (Project → Storage →
+   Create Database → Blob), copy the `BLOB_READ_WRITE_TOKEN` it gives you into
+   `.env`. This is only needed for image uploads through the admin panel —
+   everything else works without it.
+
+6. **Link the project to Vercel** (needed once, so `vercel dev` can find your env vars):
+
+   ```bash
+   npx vercel link
+   npx vercel env pull .env.development.local   # optional: sync any env vars you've set in the Vercel dashboard
+   ```
+
+## Local development
 
 ```bash
-npm install
-npm run dev       # http://localhost:5175
-npm run build     # production build into dist/
-npm run preview   # serve that build locally to sanity-check it
+npm run dev:full
 ```
+
+This runs `vercel dev`, which serves the Vite frontend **and** the `/api/*`
+serverless functions together (same as production). It reads env vars from
+`.env`. First run will prompt you to link/create a Vercel project if you
+skipped step 6 above — say yes, it doesn't deploy anything.
+
+(It's `dev:full` and not plain `dev` because Vercel's CLI refuses to run
+`vercel dev` if it finds `package.json`'s `dev` script is also `vercel dev` —
+it looks like self-recursion to it.)
+
+Visit the printed local URL, then go to `/admin/login` and sign in with the
+`ADMIN_EMAIL` / `ADMIN_BOOTSTRAP_PASSWORD` you set during seeding.
+
+If you only need the frontend (no API, e.g. quick CSS iteration), plain `npm
+run dev` runs Vite by itself — but anything that hits `/api/*` (which is most
+of the site now) won't work there.
+
+## Content model
+
+Everything you see on `/` is driven by **sections** (`sections` table),
+managed from `/admin`:
+
+- **Members** and **Events** section types render the full roster / timeline
+  from the `members` and `events` tables — edit those under their own admin
+  tabs.
+- **Stats** sections hold numeric stats + achievement badges directly.
+- **Custom** sections are freeform text+image panels — with a `variant` field
+  that also covers the hero cover panel and the finale/CTA panel, so those are
+  editable and removable like any other section, not hardcoded chrome.
+
+Add, delete, hide, and reorder sections from the **Sections** tab in
+`/admin` — the public page (and its nav) reflects that instantly.
+
+Two roles: **admin** (content + can manage other users) and **editor**
+(content only). Only admins can create/remove accounts, from the **Users** tab.
+
+## A note on the image library
+
+`public/library/` (~60 images) was carried over from art already sitting in
+this repo's `/images` folder. It's fan art scraped from artists' social posts,
+not licensed stock — filenames like `by-lazlo.jpeg` are literally the
+attribution the original post carried. Using it here was a deliberate choice
+made by the project owner despite that; if this site becomes more public or
+official, swap out anything you're not comfortable publishing under someone
+else's name via the Media tab.
+
+## Deploying
+
+```bash
+npx vercel deploy
+```
+
+Before (or after) your first deploy, add `DATABASE_URL` and
+`BLOB_READ_WRITE_TOKEN` under the Vercel project's **Settings → Environment
+Variables** (production + preview). `npm run db:migrate` / `npm run db:seed`
+are one-time setup commands you run locally against the same `DATABASE_URL` —
+they're not part of the build.

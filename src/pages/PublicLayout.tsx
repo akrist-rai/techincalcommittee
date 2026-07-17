@@ -29,8 +29,7 @@ const PublicLayoutInner: React.FC = () => {
         <Outlet />
       </div>
       <div className="colophon">
-        TECHNICAL COMMITTEE — ALL RIGHTS RESERVED TO THE CLUB — NEXT VOLUME: TBD
-        <span className="colophon-admin"> · <Link to="/admin/login">committee login</Link></span>
+        <Link to="/admin/login">committee login</Link>
       </div>
     </>
   );

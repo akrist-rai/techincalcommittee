@@ -14,7 +14,10 @@ export const Nav: React.FC<{ links: PageNavLink[] }> = ({ links }) => {
   return (
     <>
       <div className="topbar">
-        <Link className="tb-logo" to="/">TECHNICAL<em>COMMITTEE</em></Link>
+        <Link className="tb-logo" to="/">
+          <span className="tb-mark-ring"><span className="tb-mark">TC</span></span>
+          <span className="tb-wordmark">TECHNICAL<em>COMMITTEE</em></span>
+        </Link>
         <nav className="tb-nav" aria-label="Primary">
           {links.map((l) => (
             <NavLink key={l.to} className={({ isActive }) => `tb-link${isActive ? ' active' : ''}`} to={l.to}>

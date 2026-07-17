@@ -79,18 +79,69 @@ body {
   height: 64px;
   background: var(--paper);
   border-bottom: 4px solid var(--void);
+  border-top: 5px solid;
+  border-image: linear-gradient(90deg, var(--red), var(--yellow), var(--green), var(--cyan), var(--violet)) 1;
   box-shadow: 0 4px 0 rgba(0,0,0,0.1);
 }
 
 .tb-logo {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.65rem;
+  line-height: 1;
+}
+
+.tb-mark-ring {
+  display: inline-flex;
+  width: 38px;
+  height: 38px;
+  flex-shrink: 0;
+  padding: 3px;
+  border-radius: 8px;
+  background: conic-gradient(from 180deg, var(--red), var(--yellow), var(--green), var(--cyan), var(--violet), var(--red));
+  transform: rotate(-8deg);
+  box-shadow: 3px 3px 0 var(--void);
+  transition: transform 0.2s ease;
+}
+
+.tb-logo:hover .tb-mark-ring {
+  transform: rotate(2deg) scale(1.05);
+}
+
+.tb-mark {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  border-radius: 5px;
+  background: var(--void);
+  color: var(--paper);
+  font-family: var(--disp);
+  font-size: 1.05rem;
+  letter-spacing: 0.02em;
+  position: relative;
+  overflow: hidden;
+}
+
+.tb-mark::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(circle, var(--paper) 1px, transparent 1px);
+  background-size: 5px 5px;
+  opacity: 0.15;
+  mix-blend-mode: overlay;
+}
+
+.tb-wordmark {
   font-family: var(--disp);
   font-size: 1.6rem;
   letter-spacing: 0.1em;
   color: var(--void);
-  line-height: 1;
 }
 
-.tb-logo em {
+.tb-wordmark em {
   color: var(--paper);
   background: var(--void);
   padding: 0 0.3rem;
@@ -152,19 +203,20 @@ body {
   font-size: 1.2rem;
   letter-spacing: 0.08em;
   color: var(--paper);
-  background: var(--void);
+  background: var(--red);
   text-decoration: none;
   padding: 0.5rem 1.2rem;
   border: 2px solid var(--void);
+  box-shadow: -3px 3px 0 var(--void);
   transition: all 0.2s ease;
   transform: skewX(-10deg);
 }
 
 .tb-enter:hover {
-  background: var(--red);
-  color: var(--paper);
+  background: var(--void);
+  color: var(--red);
   border-color: var(--red);
-  box-shadow: -4px 4px 0 var(--void);
+  box-shadow: -4px 4px 0 var(--red);
   transform: skewX(-10deg) translate(2px, -2px);
 }
 
@@ -843,18 +895,19 @@ section {
   font-size: 0.8rem;
   font-weight: bold;
   text-align: center;
-  padding: 2rem;
+  padding: 1.5rem;
   background: var(--void);
   color: var(--paper);
   letter-spacing: 0.1em;
-  border-top: 4px solid var(--red);
+  border-top: 5px solid;
+  border-image: linear-gradient(90deg, var(--violet), var(--cyan), var(--green), var(--yellow), var(--red)) 1;
 }
 
-.colophon-admin a {
+.colophon a {
   color: rgba(244, 244, 240, 0.6);
   text-decoration: underline;
 }
-.colophon-admin a:hover {
+.colophon a:hover {
   color: var(--paper);
 }
 

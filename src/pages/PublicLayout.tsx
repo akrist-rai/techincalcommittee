@@ -1,5 +1,5 @@
 import React from 'react';
-import { Outlet } from 'react-router-dom';
+import { Link, Outlet } from 'react-router-dom';
 import { SiteDataProvider, useSiteData } from '../lib/site-data-context';
 import { Nav, type PageNavLink } from '../components/Nav';
 
@@ -30,7 +30,7 @@ const PublicLayoutInner: React.FC = () => {
       </div>
       <div className="colophon">
         TECHNICAL COMMITTEE — ALL RIGHTS RESERVED TO THE CLUB — NEXT VOLUME: TBD
-        <span className="colophon-admin"> · <a href="/admin/login">committee login</a></span>
+        <span className="colophon-admin"> · <Link to="/admin/login">committee login</Link></span>
       </div>
     </>
   );

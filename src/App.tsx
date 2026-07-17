@@ -12,12 +12,18 @@ interface CastMember {
 }
 
 const CAST: CastMember[] = [
-  { name: 'A. Rai', role: 'Chairperson', img: '/images/luffy.jpeg', quote: '"Ship it, then fix it."',
-    stats: [{ label: 'Lead', value: 9 }, { label: 'Vision', value: 8 }], size: 'lg' },
-  { name: 'K. Verma', role: 'Vice Chair', img: '/images/zoro.jpeg',
-    stats: [{ label: 'Ops', value: 9 }], size: 'md' },
-  { name: 'S. Iyer', role: 'Backend Lead', img: '/images/franky.jpeg',
-    stats: [{ label: 'Code', value: 10 }], size: 'md' },
+  {
+    name: 'A. Rai', role: 'Chairperson', img: '/images/luffy.jpeg', quote: '"Ship it, then fix it."',
+    stats: [{ label: 'Lead', value: 9 }, { label: 'Vision', value: 8 }], size: 'lg'
+  },
+  {
+    name: 'K. Verma', role: 'Vice Chair', img: '/images/zoro.jpeg',
+    stats: [{ label: 'Ops', value: 9 }], size: 'md'
+  },
+  {
+    name: 'S. Iyer', role: 'Backend Lead', img: '/images/franky.jpeg',
+    stats: [{ label: 'Code', value: 10 }], size: 'md'
+  },
   { name: 'P. Nair', role: 'Frontend Lead', img: '/images/sanji.jpeg', stats: [], size: 'sm' },
   { name: 'R. Kulkarni', role: 'ML Lead', img: '/images/itachi.jpeg', stats: [], size: 'sm' },
   { name: 'D. Sharma', role: 'Design Head', img: '/images/nami.jpeg', stats: [], size: 'sm' },
@@ -35,18 +41,30 @@ interface TocEntry {
 }
 
 const TOC: TocEntry[] = [
-  { ch: '01', page: '004', title: 'Recruitment Arc', tag: 'Onboarding', date: 'Aug 2026',
-    desc: 'Open applications, orientation, and the annual "why is git confusing" workshop.' },
-  { ch: '02', page: '018', title: 'Hack Night: Origins', tag: 'Hackathon', date: 'Sep 2026',
-    desc: '24-hour build sprint. Three teams. One working demo (allegedly).' },
-  { ch: '03', page: '033', title: 'Systems Design Dojo', tag: 'Workshop', date: 'Oct 2026',
-    desc: 'Whiteboards, load balancers, and a surprising number of anime references.' },
-  { ch: '04', page: '051', title: 'Inter-College Clash', tag: 'Competition', date: 'Nov 2026',
-    desc: 'We traveled, we competed, we returned with a trophy and zero sleep.' },
-  { ch: '05', page: '069', title: 'Merch Drop: Vol. 01', tag: 'Release', date: 'Jan 2027',
-    desc: 'First official committee merchandise line ships to members.' },
-  { ch: '06', page: '084', title: 'Finale: DemoCon', tag: 'Showcase', date: 'Mar 2027',
-    desc: 'Every project from the year, presented in one panel-packed evening.' },
+  {
+    ch: '01', page: '004', title: 'Recruitment Arc', tag: 'Onboarding', date: 'Aug 2026',
+    desc: 'Open applications, orientation, and the annual "why is git confusing" workshop.'
+  },
+  {
+    ch: '02', page: '018', title: 'Hack Night: Origins', tag: 'Hackathon', date: 'Sep 2026',
+    desc: '24-hour build sprint. Three teams. One working demo (allegedly).'
+  },
+  {
+    ch: '03', page: '033', title: 'Systems Design Dojo', tag: 'Workshop', date: 'Oct 2026',
+    desc: 'Whiteboards, load balancers, and a surprising number of anime references.'
+  },
+  {
+    ch: '04', page: '051', title: 'Inter-College Clash', tag: 'Competition', date: 'Nov 2026',
+    desc: 'We traveled, we competed, we returned with a trophy and zero sleep.'
+  },
+  {
+    ch: '05', page: '069', title: 'Merch Drop: Vol. 01', tag: 'Release', date: 'Jan 2027',
+    desc: 'First official committee merchandise line ships to members.'
+  },
+  {
+    ch: '06', page: '084', title: 'Finale: DemoCon', tag: 'Showcase', date: 'Mar 2027',
+    desc: 'Every project from the year, presented in one panel-packed evening.'
+  },
 ];
 
 const STATS = [
@@ -66,6 +84,13 @@ const BADGES: { icon: string; label: string; rarity: 'legendary' | 'rare' | 'com
   { icon: '⚡', label: '48hr No Sleep', rarity: 'legendary' },
 ];
 
+const NAV_LINKS = [
+  { href: '#cast', label: 'Cast' },
+  { href: '#chapters', label: 'Chapters' },
+  { href: '#stats', label: 'Stats' },
+  { href: '#join', label: 'Join' },
+];
+
 const GaugeDial: React.FC<{ value: number; max?: number }> = ({ value, max = 10 }) => {
   const pct = Math.min(value / max, 1) * 100;
   return (
@@ -80,6 +105,7 @@ const GaugeDial: React.FC<{ value: number; max?: number }> = ({ value, max = 10 
 
 export const App: React.FC = () => {
   const [tocOpen, setTocOpen] = useState<string | null>(TOC[0].ch);
+  const [mobileNavOpen, setMobileNavOpen] = useState(false);
 
   return (
     <>
@@ -88,8 +114,38 @@ export const App: React.FC = () => {
 
       <div className="topbar">
         <span className="tb-logo">TECHNICAL <em>COMMITTEE</em></span>
+        <nav className="tb-nav" aria-label="Primary">
+          {NAV_LINKS.map((l) => (
+            <a key={l.href} className="tb-link" href={l.href}>{l.label}</a>
+          ))}
+        </nav>
         <a className="tb-enter" href={EPHEMERAL_URL}>ENTER EPHEMERAL →</a>
+        <button
+          type="button"
+          className="tb-burger"
+          aria-expanded={mobileNavOpen}
+          aria-controls="tb-mobile-panel"
+          onClick={() => setMobileNavOpen((v) => !v)}
+        >
+          {mobileNavOpen ? 'Close' : 'Menu'}
+        </button>
       </div>
+      <nav
+        id="tb-mobile-panel"
+        className={`tb-mobile-panel${mobileNavOpen ? ' open' : ''}`}
+        aria-label="Primary mobile"
+      >
+        {NAV_LINKS.map((l) => (
+          <a
+            key={l.href}
+            className="tb-link"
+            href={l.href}
+            onClick={() => setMobileNavOpen(false)}
+          >
+            {l.label}
+          </a>
+        ))}
+      </nav>
 
       <div className="wrap">
 
@@ -111,7 +167,7 @@ export const App: React.FC = () => {
               <a className="btn btn-acc" href={EPHEMERAL_URL}>ENTER EPHEMERAL →</a>
             </div>
           </div>
-          <div className="scroll-cue">SCROLL ↓ NEXT PANEL</div>
+          <a className="scroll-cue" href="#cast">SCROLL ↓ NEXT PANEL</a>
         </section>
 
         {/* ── Cast ── */}
@@ -151,7 +207,7 @@ export const App: React.FC = () => {
         </section>
 
         {/* ── Table of Contents ── */}
-        <section style={{ padding: '4.5rem 0' }}>
+        <section id="chapters" style={{ padding: '4.5rem 0' }}>
           <div className="sect-hdr">
             <div className="sect-ttl">TABLE OF CONTENTS</div>
             <div className="sect-id">// CH. 002</div>
@@ -165,7 +221,13 @@ export const App: React.FC = () => {
                 key={t.ch}
                 className="toc-row"
                 open={tocOpen === t.ch}
-                onToggle={(e) => { if ((e.target as HTMLDetailsElement).open) setTocOpen(t.ch); }}
+                onToggle={(e) => {
+                  const isOpen = (e.target as HTMLDetailsElement).open;
+                  setTocOpen((prev) => {
+                    if (isOpen) return t.ch;
+                    return prev === t.ch ? null : prev;
+                  });
+                }}
               >
                 <summary>
                   <span className="toc-ch">{t.ch}</span>
@@ -184,7 +246,7 @@ export const App: React.FC = () => {
         </section>
 
         {/* ── Status window ── */}
-        <section style={{ padding: '4.5rem 0' }}>
+        <section id="stats" style={{ padding: '4.5rem 0' }}>
           <div className="sect-hdr">
             <div className="sect-ttl">STATUS WINDOW</div>
             <div className="sect-id">// CH. 003</div>

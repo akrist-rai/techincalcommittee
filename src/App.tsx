@@ -13,22 +13,22 @@ interface CastMember {
 
 const CAST: CastMember[] = [
   {
-    name: 'A. Rai', role: 'guild master', img: '/images/luffy.jpeg', quote: 'just deploy it and go to sleep.',
-    stats: [{ label: 'vibes', value: 9 }, { label: 'vision', value: 8 }], size: 'lg'
+    name: 'A. Rai', role: 'Chairperson', img: '/images/luffy.jpeg', quote: 'Ship it, then fix it. That is our way.',
+    stats: [{ label: 'Lead', value: 9 }, { label: 'Vision', value: 8 }], size: 'lg'
   },
   {
-    name: 'K. Verma', role: 'second in command', img: '/images/zoro.jpeg', quote: 'im not lost, the prod server is.',
-    stats: [{ label: 'ops', value: 9 }], size: 'md'
+    name: 'K. Verma', role: 'Vice Chair', img: '/images/zoro.jpeg', quote: 'Nothing happened.',
+    stats: [{ label: 'Ops', value: 9 }], size: 'md'
   },
   {
-    name: 'S. Iyer', role: 'backend demon', img: '/images/franky.jpeg', quote: 'if it works, don\'t touch it.',
-    stats: [{ label: 'code', value: 10 }], size: 'md'
+    name: 'S. Iyer', role: 'Backend Lead', img: '/images/franky.jpeg', quote: 'Super SUUUUPER architecture!',
+    stats: [{ label: 'Code', value: 10 }], size: 'md'
   },
-  { name: 'P. Nair', role: 'pixel pusher', img: '/images/sanji.jpeg', quote: 'make it pop, they said. whatever.', stats: [], size: 'wide' },
-  { name: 'R. Kulkarni', role: 'ml wizard', img: '/images/itachi.jpeg', stats: [], size: 'sm' },
-  { name: 'D. Sharma', role: 'figma lord', img: '/images/nami.jpeg', stats: [], size: 'sm' },
-  { name: 'T. Khan', role: 'hype man', img: '/images/usopp.jpeg', stats: [], size: 'sm' },
-  { name: 'V. Joshi', role: 'money bags', img: '/images/brook.jpeg', stats: [], size: 'sm' },
+  { name: 'P. Nair', role: 'Frontend Lead', img: '/images/sanji.jpeg', quote: 'I only serve the finest UI.', stats: [], size: 'wide' },
+  { name: 'R. Kulkarni', role: 'ML Lead', img: '/images/itachi.jpeg', stats: [], size: 'sm' },
+  { name: 'D. Sharma', role: 'Design Head', img: '/images/nami.jpeg', stats: [], size: 'sm' },
+  { name: 'T. Khan', role: 'Events Lead', img: '/images/usopp.jpeg', stats: [], size: 'sm' },
+  { name: 'V. Joshi', role: 'Sponsorship Lead', img: '/images/brook.jpeg', stats: [], size: 'sm' },
 ];
 
 interface TocEntry {
@@ -42,46 +42,46 @@ interface TocEntry {
 
 const TOC: TocEntry[] = [
   {
-    ch: '01', page: '004', title: 'welcome to the circus', tag: 'init', date: 'aug 2026',
-    desc: 'explaining what git is for the 100th time.'
+    ch: '01', page: '004', title: 'Recruitment Arc', tag: 'Onboarding', date: 'Aug 2026',
+    desc: 'Open applications, orientation, and the annual "why is git confusing" workshop.'
   },
   {
-    ch: '02', page: '018', title: 'nobody slept', tag: 'hack', date: 'sep 2026',
-    desc: 'we built some stuff. half of it works. good enough.'
+    ch: '02', page: '018', title: 'Hack Night: Origins', tag: 'Hackathon', date: 'Sep 2026',
+    desc: '24-hour build sprint. Three teams. One working demo (allegedly).'
   },
   {
-    ch: '03', page: '033', title: 'system design but make it anime', tag: 'yappin', date: 'oct 2026',
-    desc: 'drawing boxes on a whiteboard and calling it architecture.'
+    ch: '03', page: '033', title: 'Systems Design Dojo', tag: 'Workshop', date: 'Oct 2026',
+    desc: 'Whiteboards, load balancers, and a surprising number of anime references.'
   },
   {
-    ch: '04', page: '051', title: 'away game', tag: 'clash', date: 'nov 2026',
-    desc: 'we pulled up, got a trophy, went home to sleep.'
+    ch: '04', page: '051', title: 'Inter-College Clash', tag: 'Competition', date: 'Nov 2026',
+    desc: 'We traveled, we competed, we returned with a trophy and zero sleep.'
   },
   {
-    ch: '05', page: '069', title: 'drip check', tag: 'merch', date: 'jan 2027',
-    desc: 'finally got the hoodies. they go hard.'
+    ch: '05', page: '069', title: 'Merch Drop: Vol. 01', tag: 'Release', date: 'Jan 2027',
+    desc: 'First official committee merchandise line ships to members.'
   },
   {
-    ch: '06', page: '084', title: 'the season finale', tag: 'demo', date: 'mar 2027',
-    desc: 'showing off everything before we disappear for a month.'
+    ch: '06', page: '084', title: 'Finale: DemoCon', tag: 'Showcase', date: 'Mar 2027',
+    desc: 'Every project from the year, presented in one panel-packed evening.'
   },
 ];
 
 const STATS = [
-  { label: 'people who actually show up', value: 42 },
-  { label: 'things we organized', value: 18 },
-  { label: 'bugs shipped to prod', value: 9001 },
-  { label: 'trophies', value: 7 },
-  { label: 'coffees consumed', value: 999 },
+  { label: 'Active Members', value: 42 },
+  { label: 'Events Hosted', value: 18 },
+  { label: 'Commits Pushed', value: 9001 },
+  { label: 'Hackathons Won', value: 7 },
+  { label: 'All-Nighters / Month', value: 3 },
 ];
 
 const BADGES: { icon: string; label: string; rarity: 'legendary' | 'rare' | 'common' }[] = [
-  { icon: '🏆', label: 'carried the team', rarity: 'legendary' },
-  { icon: '💀', label: 'broke prod on friday', rarity: 'rare' },
-  { icon: '🛠️', label: 'actually shipped', rarity: 'common' },
-  { icon: '🐉', label: 'deleted the db', rarity: 'rare' },
-  { icon: '🗣️', label: 'yapped too much', rarity: 'common' },
-  { icon: '⚡', label: 'fueled by monster', rarity: 'legendary' },
+  { icon: '🏆', label: 'Hackathon S-Rank', rarity: 'legendary' },
+  { icon: '⚔️', label: '100 PRs Merged', rarity: 'rare' },
+  { icon: '🛠️', label: 'Shipped v1.0', rarity: 'common' },
+  { icon: '🐉', label: 'Boss Bug Slain', rarity: 'rare' },
+  { icon: '📜', label: 'First Talk Given', rarity: 'common' },
+  { icon: '⚡', label: '48hr No Sleep', rarity: 'legendary' },
 ];
 
 const GaugeDial: React.FC<{ value: number; max?: number }> = ({ value, max = 10 }) => {
@@ -104,20 +104,19 @@ export const App: React.FC = () => {
   };
 
   const navLinks = [
-    { id: 'home', label: 'cover' },
-    { id: 'cast', label: 'the gang' },
-    { id: 'chapters', label: 'arcs' },
-    { id: 'stats', label: 'power scaling' },
+    { id: 'home', label: 'HOME' },
+    { id: 'cast', label: 'CAST' },
+    { id: 'chapters', label: 'INDEX' },
+    { id: 'stats', label: 'POWER LEVELS' },
   ];
 
   return (
     <>
       <div className="scan" />
       <div className="dith" />
-      <div className="halftone-cyan" />
 
       <div className="topbar">
-        <span className="tb-logo" onClick={() => navigate('home')} style={{ cursor: 'pointer' }}>THE<em>CREW</em></span>
+        <span className="tb-logo" onClick={() => navigate('home')} style={{ cursor: 'pointer' }}>TECHNICAL<em>COMMITTEE</em></span>
         <nav className="tb-nav" aria-label="Primary">
           {navLinks.map((l) => (
             <button key={l.id} className={`tb-link ${currentPage === l.id ? 'active' : ''}`} onClick={() => navigate(l.id)} style={{ background: 'none', border: 'none', cursor: 'pointer' }}>
@@ -125,7 +124,7 @@ export const App: React.FC = () => {
             </button>
           ))}
         </nav>
-        <a className="tb-enter" href={EPHEMERAL_URL}>jump in</a>
+        <a className="tb-enter" href={EPHEMERAL_URL}>ENTER EPHEMERAL</a>
         <button
           type="button"
           className="tb-burger"
@@ -133,7 +132,7 @@ export const App: React.FC = () => {
           aria-controls="tb-mobile-panel"
           onClick={() => setMobileNavOpen((v) => !v)}
         >
-          {mobileNavOpen ? 'nah' : 'menu'}
+          {mobileNavOpen ? 'X' : 'MENU'}
         </button>
       </div>
       
@@ -154,39 +153,42 @@ export const App: React.FC = () => {
         ))}
       </nav>
 
-      <div className="wrap">
+      <div className="wrap" style={{ minHeight: '80vh', paddingBottom: '4rem' }}>
 
         {currentPage === 'home' && (
           <>
             <section className="cover">
-              <div className="cover-bg"><img src="/images/hero-bg.jpeg" alt="vibe check" /></div>
+              <div className="cover-bg"><img src="/images/hero-bg.jpeg" alt="Cyberpunk City Skyline" /></div>
               <div className="cover-frame">
-                <div className="mg-caption vol-tag"><span className="mg-dot" /> vol. 01 — idk — 2026</div>
+                <div className="mg-caption vol-tag"><span className="mg-dot" /> VOL. 01 — FIRST PRINTING — 2026</div>
                 <h1 className="cover-title mg-sfx">
-                  <span className="hl">THE</span><br />CREW
+                  <span className="hl">TECHNICAL</span><br />COMMITTEE
                 </h1>
                 <p className="cover-sub">
-                  we write code, break things, and pretend we know what we're doing. here's who we are and what we did.
+                  BUILDERS. BREAKERS. BOSS-FIGHT DEBUGGERS. THE FULL CAST, THE CHAPTER INDEX, AND A WAY IN TO EPHEMERAL.
                 </p>
                 <div className="cover-cta">
-                  <button className="btn" onClick={() => navigate('cast')}>who are these guys</button>
-                  <a className="btn btn-acc" href={EPHEMERAL_URL}>just let me in</a>
+                  <button className="btn" onClick={() => navigate('cast')}>MEET THE CAST</button>
+                  <a className="btn btn-acc" href={EPHEMERAL_URL}>READ NOW!</a>
                 </div>
               </div>
             </section>
             
             <section id="join" className="join" style={{ marginTop: '4rem' }}>
-              <div className="join-bg"><img src="/images/finale-bg.jpeg" alt="boom" /></div>
+              <div className="join-bg"><img src="/images/finale-bg.jpeg" alt="Action Burst" /></div>
               <div className="join-inner">
-                <div className="stamp">cliffhanger...</div>
-                <h2 className="mg-sfx join-title">NEXT UP:<br />YOU, I GUESS?</h2>
+                <div className="stamp">TO BE CONTINUED...</div>
+                <h2 className="mg-sfx join-title">NEXT CHAPTER:<br />YOU?</h2>
                 <p className="join-sub">
-                  this page is just the lobby. the real chaos happens on the main app.
+                  THIS PAGE IS THE COMMITTEE'S FRONT DOOR. EVERYTHING ELSE, THE CHALLENGES, THE LEADERBOARD, THE ARENA, LIVES ON EPHEMERAL.
                 </p>
                 <div className="join-links">
-                  <a className="btn btn-acc" href={EPHEMERAL_URL}>take me there</a>
-                  <a className="btn btn-alt" href={`${EPHEMERAL_URL}/members`}>i want to suffer too (apply)</a>
+                  <a className="btn btn-acc" href={EPHEMERAL_URL}>ENTER EPHEMERAL!</a>
+                  <a className="btn" href={`${EPHEMERAL_URL}/members`}>APPLY TO JOIN</a>
                 </div>
+                <p className="join-fine">
+                  OR HEAD STRAIGHT TO <a href={EPHEMERAL_URL}>EPHEMERAL-V2-1.VERCEL.APP</a>
+                </p>
               </div>
             </section>
           </>
@@ -195,10 +197,10 @@ export const App: React.FC = () => {
         {currentPage === 'cast' && (
           <section id="cast" style={{ padding: '4rem 0' }}>
             <div className="sect-hdr">
-              <div className="sect-ttl">THE GANG</div>
+              <div className="sect-ttl">CHARACTER INTROS</div>
               <div className="sect-meta">
-                <div className="sect-id">intel // 001</div>
-                <div className="sect-count">{String(CAST.length).padStart(2, '0')} nerds</div>
+                <div className="sect-id">FILE // 001</div>
+                <div className="sect-count">{String(CAST.length).padStart(2, '0')} PROFILES</div>
               </div>
             </div>
 
@@ -227,7 +229,7 @@ export const App: React.FC = () => {
               ))}
             </div>
             <div style={{ textAlign: 'center', marginTop: '3rem' }}>
-              <button className="btn" onClick={() => navigate('chapters')}>alright, what's next</button>
+              <button className="btn" onClick={() => navigate('chapters')}>NEXT: CHAPTER INDEX</button>
             </div>
           </section>
         )}
@@ -235,10 +237,10 @@ export const App: React.FC = () => {
         {currentPage === 'chapters' && (
           <section id="chapters" style={{ padding: '4rem 0' }}>
             <div className="sect-hdr">
-              <div className="sect-ttl">STORY ARCS</div>
+              <div className="sect-ttl">CHAPTER INDEX</div>
               <div className="sect-meta">
-                <div className="sect-id">log // 002</div>
-                <div className="sect-count">{TOC.length} events</div>
+                <div className="sect-id">FILE // 002</div>
+                <div className="sect-count">{TOC.length} ARCS</div>
               </div>
             </div>
 
@@ -271,7 +273,7 @@ export const App: React.FC = () => {
               ))}
             </div>
             <div style={{ textAlign: 'center', marginTop: '3rem' }}>
-              <button className="btn btn-alt" onClick={() => navigate('stats')}>show me the stats</button>
+              <button className="btn" onClick={() => navigate('stats')}>NEXT: POWER LEVELS</button>
             </div>
           </section>
         )}
@@ -279,16 +281,16 @@ export const App: React.FC = () => {
         {currentPage === 'stats' && (
           <section id="stats" style={{ padding: '4rem 0' }}>
             <div className="sect-hdr">
-              <div className="sect-ttl">POWER SCALING</div>
+              <div className="sect-ttl">POWER LEVELS</div>
               <div className="sect-meta">
-                <div className="sect-id">data // 003</div>
-                <div className="sect-count">useless metrics</div>
+                <div className="sect-id">FILE // 003</div>
+                <div className="sect-count">GUILD STATS</div>
               </div>
             </div>
 
             <div className="status-window">
               <div className="status-col">
-                <div className="status-heading mg-sfx">numbers</div>
+                <div className="status-heading mg-sfx">STATS</div>
                 {STATS.map((s, i) => (
                   <div className="status-row" key={i}>
                     <span className="status-num">{s.value}</span>
@@ -298,7 +300,7 @@ export const App: React.FC = () => {
               </div>
               <div className="status-divider" />
               <div className="status-col">
-                <div className="status-heading mg-sfx">achievements</div>
+                <div className="status-heading mg-sfx">ACHIEVEMENTS</div>
                 <div className="badges">
                   {BADGES.map((b, i) => (
                     <div className={`badge badge--${b.rarity}`} key={i}>
@@ -312,7 +314,7 @@ export const App: React.FC = () => {
             </div>
             
             <div style={{ textAlign: 'center', marginTop: '3rem' }}>
-              <button className="btn" onClick={() => navigate('home')}>back to the start</button>
+              <button className="btn" onClick={() => navigate('home')}>BACK TO COVER</button>
             </div>
           </section>
         )}
@@ -320,7 +322,7 @@ export const App: React.FC = () => {
       </div>
 
       <div className="colophon">
-        THE CREW VOL. 01 — NO RIGHTS RESERVED — WE LITERALLY JUST GOOGLED HOW TO MAKE THIS
+        TECHNICAL COMMITTEE VOL. 01 — ALL RIGHTS RESERVED TO THE GUILD — NEXT VOLUME: TBD
       </div>
     </>
   );

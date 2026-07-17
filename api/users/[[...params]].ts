@@ -1,42 +1,41 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
 import bcrypt from 'bcryptjs';
-import { sql } from '../_lib/db.js';
+import { asc, eq, sql as rawSql } from 'drizzle-orm';
+import { db } from '../_lib/db.js';
+import { users } from '../../db/schema.js';
 import { requireAdmin, type AuthUser } from '../_lib/auth.js';
 import { HttpError, getCatchAllParams, json, methodNotAllowed, withErrorHandling } from '../_lib/http.js';
 import { userCreateSchema, userUpdateSchema } from '../_lib/schema.js';
+import { serializeUser } from '../_lib/serialize.js';
 
 async function countAdmins(): Promise<number> {
-  const rows = await sql()`select count(*)::int as count from users where role = 'admin'`;
-  return (rows[0] as { count: number }).count;
+  const rows = await db().select({ count: rawSql<number>`count(*)::int` }).from(users).where(eq(users.role, 'admin'));
+  return rows[0].count;
 }
 
 async function list(res: VercelResponse) {
-  const rows = await sql()`
-    select id, email, name, role, created_at, last_login_at from users order by created_at asc
-  `;
-  json(res, 200, rows);
+  const rows = await db().select().from(users).orderBy(asc(users.createdAt));
+  json(res, 200, rows.map(serializeUser));
 }
 
 async function create(req: VercelRequest, res: VercelResponse) {
   const data = userCreateSchema.parse(req.body);
 
-  const existing = await sql()`select id from users where email = ${data.email} limit 1`;
+  const existing = await db().select({ id: users.id }).from(users).where(eq(users.email, data.email)).limit(1);
   if (existing.length > 0) throw new HttpError(409, 'A user with that email already exists');
 
   const passwordHash = await bcrypt.hash(data.password, 12);
-  const rows = await sql()`
-    insert into users (email, name, password_hash, role)
-    values (${data.email}, ${data.name}, ${passwordHash}, ${data.role})
-    returning id, email, name, role, created_at, last_login_at
-  `;
-  json(res, 201, rows[0]);
+  const rows = await db().insert(users).values({
+    email: data.email, name: data.name, passwordHash, role: data.role,
+  }).returning();
+  json(res, 201, serializeUser(rows[0]));
 }
 
 async function update(req: VercelRequest, res: VercelResponse, admin: AuthUser, id: string) {
   const patch = userUpdateSchema.parse(req.body);
 
-  const existingRows = await sql()`select * from users where id = ${id} limit 1`;
-  const existing = existingRows[0] as { id: string; name: string; role: string } | undefined;
+  const existingRows = await db().select().from(users).where(eq(users.id, id)).limit(1);
+  const existing = existingRows[0];
   if (!existing) throw new HttpError(404, 'User not found');
 
   if (existing.id === admin.id && patch.role && patch.role !== 'admin') {
@@ -46,33 +45,27 @@ async function update(req: VercelRequest, res: VercelResponse, admin: AuthUser, 
     throw new HttpError(400, 'At least one admin must remain');
   }
 
-  const name = patch.name ?? existing.name;
-  const role = patch.role ?? existing.role;
   const passwordHash = patch.password ? await bcrypt.hash(patch.password, 12) : undefined;
 
-  const rows = passwordHash
-    ? await sql()`
-        update users set name = ${name}, role = ${role}, password_hash = ${passwordHash}
-        where id = ${id} returning id, email, name, role, created_at, last_login_at
-      `
-    : await sql()`
-        update users set name = ${name}, role = ${role}
-        where id = ${id} returning id, email, name, role, created_at, last_login_at
-      `;
-  json(res, 200, rows[0]);
+  const rows = await db().update(users).set({
+    name: patch.name ?? existing.name,
+    role: patch.role ?? existing.role,
+    ...(passwordHash ? { passwordHash } : {}),
+  }).where(eq(users.id, id)).returning();
+  json(res, 200, serializeUser(rows[0]));
 }
 
 async function remove(res: VercelResponse, admin: AuthUser, id: string) {
   if (id === admin.id) throw new HttpError(400, 'You cannot delete your own account');
 
-  const existingRows = await sql()`select role from users where id = ${id} limit 1`;
-  const existing = existingRows[0] as { role: string } | undefined;
+  const existingRows = await db().select({ role: users.role }).from(users).where(eq(users.id, id)).limit(1);
+  const existing = existingRows[0];
   if (!existing) throw new HttpError(404, 'User not found');
   if (existing.role === 'admin' && (await countAdmins()) <= 1) {
     throw new HttpError(400, 'At least one admin must remain');
   }
 
-  await sql()`delete from users where id = ${id}`;
+  await db().delete(users).where(eq(users.id, id));
   json(res, 200, { ok: true });
 }
 

@@ -1,7 +1,9 @@
 import crypto from 'node:crypto';
 import type { VercelRequest, VercelResponse } from '@vercel/node';
 import { parse as parseCookie, serialize as serializeCookie } from 'cookie';
-import { sql } from './db.js';
+import { and, eq, gt } from 'drizzle-orm';
+import { db } from './db.js';
+import { sessions, users } from '../../db/schema.js';
 import { HttpError } from './http.js';
 
 const COOKIE_NAME = 'session';
@@ -29,10 +31,7 @@ export async function createSession(res: VercelResponse, userId: string): Promis
   const tokenHash = hashToken(token);
   const expiresAt = new Date(Date.now() + SESSION_DAYS * 24 * 60 * 60 * 1000);
 
-  await sql()`
-    insert into sessions (user_id, token_hash, expires_at)
-    values (${userId}, ${tokenHash}, ${expiresAt.toISOString()})
-  `;
+  await db().insert(sessions).values({ userId, tokenHash, expiresAt });
 
   res.setHeader(
     'set-cookie',
@@ -49,7 +48,7 @@ export async function createSession(res: VercelResponse, userId: string): Promis
 export async function destroySession(req: VercelRequest, res: VercelResponse): Promise<void> {
   const token = getSessionToken(req);
   if (token) {
-    await sql()`delete from sessions where token_hash = ${hashToken(token)}`;
+    await db().delete(sessions).where(eq(sessions.tokenHash, hashToken(token)));
   }
   res.setHeader(
     'set-cookie',
@@ -68,15 +67,16 @@ export async function getSessionUser(req: VercelRequest): Promise<AuthUser | nul
   const token = getSessionToken(req);
   if (!token) return null;
 
-  const rows = await sql()`
-    select u.id, u.email, u.name, u.role
-    from sessions s
-    join users u on u.id = s.user_id
-    where s.token_hash = ${hashToken(token)} and s.expires_at > now()
-    limit 1
-  `;
-  const row = rows[0] as AuthUser | undefined;
-  return row ?? null;
+  const rows = await db()
+    .select({
+      id: users.id, email: users.email, name: users.name, role: users.role,
+    })
+    .from(sessions)
+    .innerJoin(users, eq(users.id, sessions.userId))
+    .where(and(eq(sessions.tokenHash, hashToken(token)), gt(sessions.expiresAt, new Date())))
+    .limit(1);
+
+  return (rows[0] as AuthUser | undefined) ?? null;
 }
 
 export async function requireSession(req: VercelRequest): Promise<AuthUser> {

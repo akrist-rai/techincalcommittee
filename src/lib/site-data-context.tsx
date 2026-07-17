@@ -1,11 +1,12 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { SiteApi } from './api';
-import type { Section } from './types';
+import type { Club, Section } from './types';
 import { uniqueAnchors } from './slug';
 
 interface SiteDataState {
   sections: Section[] | null;
   anchors: string[];
+  clubs: Club[];
   error: string | null;
 }
 
@@ -24,9 +25,10 @@ export const SiteDataProvider: React.FC<{ children: React.ReactNode }> = ({ chil
   }, []);
 
   const anchors = sections ? uniqueAnchors(sections, (s) => s.title || s.type) : [];
+  const clubs = sections?.find((s) => s.type === 'clubs')?.items ?? [];
 
   return (
-    <SiteDataContext.Provider value={{ sections, anchors, error }}>
+    <SiteDataContext.Provider value={{ sections, anchors, clubs, error }}>
       {children}
     </SiteDataContext.Provider>
   );

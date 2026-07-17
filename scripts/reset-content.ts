@@ -1,60 +1,52 @@
-// Replaces members/events/sections with the current defaults from
+// Replaces clubs/members/events/sections with the current defaults from
 // content.ts — unlike seed.ts this is NOT idempotent-guarded, it always
 // overwrites. Leaves users and the media library untouched. Use this after
 // changing content.ts to push a content refresh to a DB that's already been
 // seeded once (seed.ts's empty-table guard would otherwise no-op).
-import { Client, neonConfig } from '@neondatabase/serverless';
-import ws from 'ws';
-import { EVENTS, MEMBERS, SECTIONS } from './content.js';
-
-neonConfig.webSocketConstructor = ws;
+import { neon } from '@neondatabase/serverless';
+import { drizzle } from 'drizzle-orm/neon-http';
+import * as schema from '../db/schema.js';
+import {
+  CLUBS, EVENTS, MEMBERS, SECTIONS,
+} from './content.js';
 
 async function main() {
   const databaseUrl = process.env.DATABASE_URL;
   if (!databaseUrl) throw new Error('DATABASE_URL is not set.');
 
-  const client = new Client(databaseUrl);
-  await client.connect();
+  const db = drizzle(neon(databaseUrl), { schema });
 
-  try {
-    await client.query('delete from sections');
-    await client.query('delete from events');
-    await client.query('delete from members');
+  await db.delete(schema.sections);
+  await db.delete(schema.events);
+  await db.delete(schema.members);
+  await db.delete(schema.clubs);
 
-    for (let i = 0; i < MEMBERS.length; i++) {
-      const m = MEMBERS[i];
-      await client.query(
-        `insert into members (name, role, img_url, quote, stats, size, order_index)
-         values ($1, $2, $3, $4, $5, $6, $7)`,
-        [m.name, m.role, m.img_url, m.quote, JSON.stringify(m.stats), m.size, i],
-      );
-    }
-    console.log(`Reset: ${MEMBERS.length} members.`);
+  const insertedClubs = await db.insert(schema.clubs).values(CLUBS.map((c, i) => ({
+    name: c.name, slug: c.slug, tagline: c.tagline, description: c.description,
+    imgUrl: c.img_url, accent: c.accent, orderIndex: i,
+  }))).returning({ id: schema.clubs.id, slug: schema.clubs.slug });
+  const clubIdBySlug = new Map(insertedClubs.map((c) => [c.slug, c.id]));
+  console.log(`Reset: ${CLUBS.length} clubs.`);
 
-    for (let i = 0; i < EVENTS.length; i++) {
-      const e = EVENTS[i];
-      await client.query(
-        `insert into events (chapter, page, title, tag, date_label, description, order_index)
-         values ($1, $2, $3, $4, $5, $6, $7)`,
-        [e.chapter, e.page, e.title, e.tag, e.date_label, e.description, i],
-      );
-    }
-    console.log(`Reset: ${EVENTS.length} events.`);
+  await db.insert(schema.members).values(MEMBERS.map((m, i) => ({
+    clubId: clubIdBySlug.get(m.clubSlug) ?? null,
+    name: m.name, role: m.role, imgUrl: m.img_url, quote: m.quote, stats: m.stats, size: m.size, orderIndex: i,
+  })));
+  console.log(`Reset: ${MEMBERS.length} members.`);
 
-    for (let i = 0; i < SECTIONS.length; i++) {
-      const s = SECTIONS[i];
-      await client.query(
-        `insert into sections (type, title, subtitle, order_index, visible, accent, config)
-         values ($1, $2, $3, $4, true, $5, $6)`,
-        [s.type, s.title, s.subtitle, i, s.accent, JSON.stringify(s.config)],
-      );
-    }
-    console.log(`Reset: ${SECTIONS.length} sections.`);
+  await db.insert(schema.events).values(EVENTS.map((e, i) => ({
+    clubId: e.clubSlug ? (clubIdBySlug.get(e.clubSlug) ?? null) : null,
+    chapter: e.chapter, page: e.page, title: e.title, tag: e.tag, dateLabel: e.date_label,
+    description: e.description, orderIndex: i,
+  })));
+  console.log(`Reset: ${EVENTS.length} events.`);
 
-    console.log('Content reset complete.');
-  } finally {
-    await client.end();
-  }
+  await db.insert(schema.sections).values(SECTIONS.map((s, i) => ({
+    type: s.type, title: s.title, subtitle: s.subtitle, orderIndex: i, visible: true, accent: s.accent, config: s.config,
+  })));
+  console.log(`Reset: ${SECTIONS.length} sections.`);
+
+  console.log('Content reset complete.');
 }
 
 main().catch((err) => {

@@ -11,6 +11,7 @@ export const statItemSchema = z.object({
 });
 
 export const memberSchema = z.object({
+  club_id: z.string().uuid().nullable().default(null),
   name: z.string().trim().min(1).max(120),
   role: z.string().trim().max(120).default(''),
   img_url: z.string().trim().max(2000).default(''),
@@ -24,6 +25,7 @@ export const memberUpdateSchema = memberSchema.partial().extend({
 });
 
 export const eventSchema = z.object({
+  club_id: z.string().uuid().nullable().default(null),
   chapter: z.string().trim().max(20).default(''),
   page: z.string().trim().max(20).default(''),
   title: z.string().trim().min(1).max(160),
@@ -33,6 +35,19 @@ export const eventSchema = z.object({
 });
 
 export const eventUpdateSchema = eventSchema.partial().extend({
+  order_index: z.number().int().optional(),
+});
+
+export const clubSchema = z.object({
+  name: z.string().trim().min(1).max(120),
+  slug: z.string().trim().min(1).max(80).regex(/^[a-z0-9-]+$/, 'lowercase letters, numbers, and hyphens only'),
+  tagline: z.string().trim().max(200).default(''),
+  description: z.string().trim().max(2000).default(''),
+  img_url: z.string().trim().max(2000).default(''),
+  accent: z.enum(['red', 'cyan', 'yellow', 'violet', 'green']).default('red'),
+});
+
+export const clubUpdateSchema = clubSchema.partial().extend({
   order_index: z.number().int().optional(),
 });
 
@@ -67,6 +82,7 @@ export const statsConfigSchema = z.object({
 
 export const membersConfigSchema = z.object({}).catchall(z.never()).default({});
 export const eventsConfigSchema = z.object({}).catchall(z.never()).default({});
+export const clubsConfigSchema = z.object({}).catchall(z.never()).default({});
 
 export const accentSchema = z.enum(['red', 'cyan', 'yellow', 'violet', 'green']);
 
@@ -82,12 +98,13 @@ export const sectionCreateSchema = z.discriminatedUnion('type', [
   sectionBaseSchema.extend({ type: z.literal('events'), config: eventsConfigSchema }),
   sectionBaseSchema.extend({ type: z.literal('stats'), config: statsConfigSchema }),
   sectionBaseSchema.extend({ type: z.literal('custom'), config: customConfigSchema }),
+  sectionBaseSchema.extend({ type: z.literal('clubs'), config: clubsConfigSchema }),
 ]);
 
 // Updates may omit `config`/`type` entirely (e.g. a pure reorder/visibility toggle),
 // so this stays a plain partial rather than the discriminated union above.
 export const sectionUpdateSchema = z.object({
-  type: z.enum(['members', 'events', 'stats', 'custom']).optional(),
+  type: z.enum(['members', 'events', 'stats', 'custom', 'clubs']).optional(),
   title: z.string().trim().max(160).optional(),
   subtitle: z.string().trim().max(300).optional(),
   visible: z.boolean().optional(),

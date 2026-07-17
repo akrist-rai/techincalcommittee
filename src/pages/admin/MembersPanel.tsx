@@ -1,16 +1,20 @@
 import React, { useEffect, useState } from 'react';
-import { MembersApi, ApiError } from '../../lib/api';
-import type { Member } from '../../lib/types';
+import { MembersApi, ClubsApi, ApiError } from '../../lib/api';
+import type { Club, Member } from '../../lib/types';
 import { MediaPicker } from '../../components/MediaPicker';
 import { StatsEditor } from '../../components/editors';
 
 const EMPTY_MEMBER: Omit<Member, 'id' | 'order_index'> = {
-  name: '', role: '', img_url: '', quote: '', stats: [], size: 'md',
+  club_id: null, name: '', role: '', img_url: '', quote: '', stats: [], size: 'md',
 };
 
 function MemberEditor({
-  draft, onChange,
-}: { draft: Omit<Member, 'id' | 'order_index'>; onChange: (d: Omit<Member, 'id' | 'order_index'>) => void }) {
+  draft, onChange, clubs,
+}: {
+  draft: Omit<Member, 'id' | 'order_index'>;
+  onChange: (d: Omit<Member, 'id' | 'order_index'>) => void;
+  clubs: Club[];
+}) {
   return (
     <div className="admin-card-body">
       <div className="admin-form-grid">
@@ -21,6 +25,16 @@ function MemberEditor({
         <label className="admin-field">
           <span>Role</span>
           <input value={draft.role} onChange={(e) => onChange({ ...draft, role: e.target.value })} />
+        </label>
+        <label className="admin-field">
+          <span>Club</span>
+          <select
+            value={draft.club_id ?? ''}
+            onChange={(e) => onChange({ ...draft, club_id: e.target.value || null })}
+          >
+            <option value="">— none —</option>
+            {clubs.map((c) => <option key={c.id} value={c.id}>{c.name}</option>)}
+          </select>
         </label>
         <label className="admin-field">
           <span>Card size</span>
@@ -50,6 +64,7 @@ function MemberEditor({
 
 export const MembersPanel: React.FC = () => {
   const [members, setMembers] = useState<Member[] | null>(null);
+  const [clubs, setClubs] = useState<Club[]>([]);
   const [drafts, setDrafts] = useState<Record<string, Omit<Member, 'id' | 'order_index'>>>({});
   const [newDraft, setNewDraft] = useState<Omit<Member, 'id' | 'order_index'> | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -60,7 +75,10 @@ export const MembersPanel: React.FC = () => {
     setDrafts(Object.fromEntries(list.map((m) => [m.id, { ...m }])));
   });
 
-  useEffect(() => { load().catch((err) => setError(err instanceof ApiError ? err.message : 'load failed.')); }, []);
+  useEffect(() => {
+    load().catch((err) => setError(err instanceof ApiError ? err.message : 'load failed.'));
+    ClubsApi.list().then(setClubs).catch(() => undefined);
+  }, []);
 
   const save = async (id: string) => {
     setBusyId(id);
@@ -138,7 +156,7 @@ export const MembersPanel: React.FC = () => {
       {newDraft && (
         <div className="admin-card admin-card--new">
           <div className="admin-card-header">New member</div>
-          <MemberEditor draft={newDraft} onChange={setNewDraft} />
+          <MemberEditor draft={newDraft} onChange={setNewDraft} clubs={clubs} />
           <div className="admin-card-actions">
             <button className="admin-btn admin-btn-primary" disabled={busyId === '__new__'} onClick={create}>Create</button>
             <button className="admin-btn admin-btn-ghost" onClick={() => setNewDraft(null)}>Cancel</button>
@@ -159,6 +177,7 @@ export const MembersPanel: React.FC = () => {
           <MemberEditor
             draft={drafts[m.id] ?? { ...m }}
             onChange={(d) => setDrafts((prev) => ({ ...prev, [m.id]: d }))}
+            clubs={clubs}
           />
           <div className="admin-card-actions">
             <button className="admin-btn admin-btn-primary" disabled={busyId === m.id} onClick={() => save(m.id)}>

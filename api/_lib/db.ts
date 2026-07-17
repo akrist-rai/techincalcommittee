@@ -1,12 +1,16 @@
-import { neon, type NeonQueryFunction } from '@neondatabase/serverless';
+import { neon } from '@neondatabase/serverless';
+import { drizzle } from 'drizzle-orm/neon-http';
+import * as schema from '../../db/schema.js';
 
-let client: NeonQueryFunction<false, false> | undefined;
+let client: ReturnType<typeof drizzle<typeof schema>> | undefined;
 
-export function sql(): NeonQueryFunction<false, false> {
+export function db() {
   if (!client) {
     const url = process.env.DATABASE_URL;
     if (!url) throw new Error('DATABASE_URL is not set');
-    client = neon(url);
+    client = drizzle(neon(url), { schema });
   }
   return client;
 }
+
+export * as t from '../../db/schema.js';

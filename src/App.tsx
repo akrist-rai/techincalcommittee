@@ -3,6 +3,7 @@ import { Route, Routes } from 'react-router-dom';
 import { PublicLayout } from './pages/PublicLayout';
 import { HomePage } from './pages/HomePage';
 import { SectionPage } from './pages/SectionPage';
+import { ClubPage } from './pages/ClubPage';
 import { Login } from './pages/admin/Login';
 import { Dashboard } from './pages/admin/Dashboard';
 import { ProtectedRoute } from './components/ProtectedRoute';
@@ -11,6 +12,7 @@ export const App: React.FC = () => (
   <Routes>
     <Route element={<PublicLayout />}>
       <Route path="/" element={<HomePage />} />
+      <Route path="/club/:clubSlug" element={<ClubPage />} />
       <Route path="/:slug" element={<SectionPage />} />
     </Route>
 

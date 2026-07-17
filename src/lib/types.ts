@@ -16,6 +16,7 @@ export interface StatItem {
 
 export interface Member {
   id: string;
+  club_id: string | null;
   name: string;
   role: string;
   img_url: string;
@@ -27,6 +28,7 @@ export interface Member {
 
 export interface EventItem {
   id: string;
+  club_id: string | null;
   chapter: string;
   page: string;
   title: string;
@@ -34,6 +36,19 @@ export interface EventItem {
   date_label: string;
   description: string;
   order_index: number;
+}
+
+export interface Club {
+  id: string;
+  name: string;
+  slug: string;
+  tagline: string;
+  description: string;
+  img_url: string;
+  accent: Accent;
+  order_index: number;
+  members?: Member[];
+  events?: EventItem[];
 }
 
 export interface BadgeItem {
@@ -65,7 +80,7 @@ export interface StatsConfig {
   badges: BadgeItem[];
 }
 
-export type SectionType = 'members' | 'events' | 'stats' | 'custom';
+export type SectionType = 'members' | 'events' | 'stats' | 'custom' | 'clubs';
 export type Accent = 'red' | 'cyan' | 'yellow' | 'violet' | 'green';
 
 export interface SectionBase {
@@ -90,6 +105,12 @@ export interface EventsSection extends SectionBase {
   items?: EventItem[];
 }
 
+export interface ClubsSection extends SectionBase {
+  type: 'clubs';
+  config: Record<string, never>;
+  items?: Club[];
+}
+
 export interface StatsSection extends SectionBase {
   type: 'stats';
   config: StatsConfig;
@@ -100,7 +121,7 @@ export interface CustomSection extends SectionBase {
   config: CustomConfig;
 }
 
-export type Section = MembersSection | EventsSection | StatsSection | CustomSection;
+export type Section = MembersSection | EventsSection | ClubsSection | StatsSection | CustomSection;
 
 export interface MediaItem {
   id: string;

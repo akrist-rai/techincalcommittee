@@ -1,5 +1,5 @@
 import type {
-  EventItem, Member, MediaItem, Section, SiteData, User,
+  Club, EventItem, Member, MediaItem, Section, SiteData, User,
 } from './types';
 
 export class ApiError extends Error {
@@ -62,6 +62,15 @@ export const EventsApi = {
   update: (id: string, data: Partial<EventItem>) =>
     request<EventItem>(`/api/events/${id}`, { method: 'PUT', ...jsonBody(data) }),
   remove: (id: string) => request<{ ok: true }>(`/api/events/${id}`, { method: 'DELETE' }),
+};
+
+// -- clubs --
+export const ClubsApi = {
+  list: () => request<Club[]>('/api/clubs'),
+  create: (data: Partial<Club>) => request<Club>('/api/clubs', { method: 'POST', ...jsonBody(data) }),
+  update: (id: string, data: Partial<Club>) =>
+    request<Club>(`/api/clubs/${id}`, { method: 'PUT', ...jsonBody(data) }),
+  remove: (id: string) => request<{ ok: true }>(`/api/clubs/${id}`, { method: 'DELETE' }),
 };
 
 // -- sections --

@@ -1,6 +1,8 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
 import bcrypt from 'bcryptjs';
-import { sql } from '../_lib/db.js';
+import { eq } from 'drizzle-orm';
+import { db } from '../_lib/db.js';
+import { users } from '../../db/schema.js';
 import { createSession, destroySession, getSessionUser } from '../_lib/auth.js';
 import { HttpError, json, methodNotAllowed, withErrorHandling } from '../_lib/http.js';
 import { loginSchema } from '../_lib/schema.js';
@@ -10,17 +12,15 @@ async function login(req: VercelRequest, res: VercelResponse) {
 
   const { email, password } = loginSchema.parse(req.body);
 
-  const rows = await sql()`
-    select id, email, name, password_hash, role from users where email = ${email.toLowerCase()} limit 1
-  `;
-  const user = rows[0] as { id: string; email: string; name: string; password_hash: string; role: string } | undefined;
+  const rows = await db().select().from(users).where(eq(users.email, email.toLowerCase())).limit(1);
+  const user = rows[0];
   if (!user) throw new HttpError(401, 'Invalid email or password');
 
-  const valid = await bcrypt.compare(password, user.password_hash);
+  const valid = await bcrypt.compare(password, user.passwordHash);
   if (!valid) throw new HttpError(401, 'Invalid email or password');
 
   await createSession(res, user.id);
-  await sql()`update users set last_login_at = now() where id = ${user.id}`;
+  await db().update(users).set({ lastLoginAt: new Date() }).where(eq(users.id, user.id));
 
   json(res, 200, { id: user.id, email: user.email, name: user.name, role: user.role });
 }

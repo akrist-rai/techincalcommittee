@@ -1,10 +1,13 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
 import crypto from 'node:crypto';
 import { del, put } from '@vercel/blob';
-import { sql } from '../_lib/db.js';
+import { desc, eq } from 'drizzle-orm';
+import { db } from '../_lib/db.js';
+import { images } from '../../db/schema.js';
 import { requireSession } from '../_lib/auth.js';
 import { HttpError, getCatchAllParams, json, methodNotAllowed, withErrorHandling } from '../_lib/http.js';
 import { mediaMetaSchema } from '../_lib/schema.js';
+import { serializeImage } from '../_lib/serialize.js';
 
 // Whole file (index + [id] collapsed together, see getCatchAllParams) runs
 // with the parsed-JSON body parser off, since uploads need the raw byte
@@ -42,8 +45,8 @@ function sanitizeFilename(name: string): string {
 }
 
 async function list(res: VercelResponse) {
-  const rows = await sql()`select * from images order by created_at desc`;
-  json(res, 200, rows);
+  const rows = await db().select().from(images).orderBy(desc(images.createdAt));
+  json(res, 200, rows.map(serializeImage));
 }
 
 async function upload(req: VercelRequest, res: VercelResponse) {
@@ -62,29 +65,27 @@ async function upload(req: VercelRequest, res: VercelResponse) {
   const key = `uploads/${crypto.randomUUID()}-${filename}`;
   const blob = await put(key, body, { access: 'public', contentType });
 
-  const rows = await sql()`
-    insert into images (url, alt_text, uploaded_by)
-    values (${blob.url}, ${filename}, ${user.id})
-    returning *
-  `;
-  json(res, 201, rows[0]);
+  const rows = await db().insert(images).values({
+    url: blob.url, altText: filename, uploadedBy: user.id,
+  }).returning();
+  json(res, 201, serializeImage(rows[0]));
 }
 
 async function updateAlt(req: VercelRequest, res: VercelResponse, id: string) {
   await requireSession(req);
   const body = await readJsonBody(req);
   const { alt_text } = mediaMetaSchema.parse(body);
-  const rows = await sql()`update images set alt_text = ${alt_text} where id = ${id} returning *`;
+  const rows = await db().update(images).set({ altText: alt_text }).where(eq(images.id, id)).returning();
   if (rows.length === 0) throw new HttpError(404, 'Image not found');
-  json(res, 200, rows[0]);
+  json(res, 200, serializeImage(rows[0]));
 }
 
 async function remove(req: VercelRequest, res: VercelResponse, id: string) {
   await requireSession(req);
-  const rows = await sql()`delete from images where id = ${id} returning url`;
+  const rows = await db().delete(images).where(eq(images.id, id)).returning({ url: images.url });
   if (rows.length === 0) throw new HttpError(404, 'Image not found');
 
-  const url = rows[0].url as string;
+  const url = rows[0].url;
   if (url.includes('.blob.vercel-storage.com')) {
     await del(url).catch(() => undefined);
   }

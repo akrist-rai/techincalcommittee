@@ -4,6 +4,7 @@
     { "source": "/api/events", "destination": "/api/events/_root" },
     { "source": "/api/sections", "destination": "/api/sections/_root" },
     { "source": "/api/media", "destination": "/api/media/_root" },
-    { "source": "/api/users", "destination": "/api/users/_root" }
+    { "source": "/api/users", "destination": "/api/users/_root" },
+    { "source": "/api/clubs", "destination": "/api/clubs/_root" }
   ]
 }

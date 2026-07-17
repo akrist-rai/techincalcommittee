@@ -1,6 +1,7 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import type {
-  CustomSection, EventsSection, MembersSection, Section, StatsSection,
+  ClubsSection, CustomSection, EventsSection, MembersSection, Section, StatsSection,
 } from '../lib/types';
 
 const GaugeDial: React.FC<{ value: number }> = ({ value }) => <span className="gauge-dial">{value}</span>;
@@ -149,6 +150,38 @@ const EventsSectionView: React.FC<{ section: EventsSection; fileNo: number }> = 
   );
 };
 
+const ClubsSectionView: React.FC<{ section: ClubsSection; fileNo: number }> = ({ section, fileNo }) => {
+  const items = section.items ?? [];
+  return (
+    <section data-accent={section.accent}>
+      <div className="sect-hdr">
+        <div className="sect-ttl">{section.title || 'CLUBS'}</div>
+        <div className="sect-meta">
+          <div className="sect-id">FILE // {String(fileNo).padStart(3, '0')}</div>
+          <div className="sect-count">{items.length} CLUBS</div>
+        </div>
+      </div>
+      {section.subtitle && <p className="sect-sub">{section.subtitle}</p>}
+
+      <div className="teaser-grid">
+        {items.map((c) => (
+          <Link
+            key={c.id}
+            to={`/club/${c.slug}`}
+            className="teaser-card"
+            style={{ '--card-accent': `var(--${c.accent})` } as React.CSSProperties}
+          >
+            <span className="teaser-eyebrow">{(c.members?.length ?? 0)} MEMBER{(c.members?.length ?? 0) === 1 ? '' : 'S'}</span>
+            <div className="teaser-title mg-sfx">{c.name}</div>
+            {c.tagline && <p className="teaser-sub">{c.tagline}</p>}
+            <span className="teaser-go">SEE THE CLUB →</span>
+          </Link>
+        ))}
+      </div>
+    </section>
+  );
+};
+
 const StatsSectionView: React.FC<{ section: StatsSection; fileNo: number }> = ({ section, fileNo }) => {
   const { stats, badges } = section.config;
   return (
@@ -196,6 +229,8 @@ export const SectionRenderer: React.FC<{ section: Section; fileNo: number }> = (
       return <MembersSectionView section={section} fileNo={fileNo} />;
     case 'events':
       return <EventsSectionView section={section} fileNo={fileNo} />;
+    case 'clubs':
+      return <ClubsSectionView section={section} fileNo={fileNo} />;
     case 'stats':
       return <StatsSectionView section={section} fileNo={fileNo} />;
     case 'custom':

@@ -4,7 +4,7 @@ import { useSiteData } from '../lib/site-data-context';
 import { SectionRenderer } from '../components/SectionRenderer';
 import type { Section } from '../lib/types';
 
-const FILED_TYPES = new Set<Section['type']>(['members', 'events', 'stats']);
+const FILED_TYPES = new Set<Section['type']>(['members', 'events', 'stats', 'clubs']);
 
 export const SectionPage: React.FC = () => {
   const { sections, anchors } = useSiteData();

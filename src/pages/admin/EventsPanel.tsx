@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from 'react';
-import { EventsApi, ApiError } from '../../lib/api';
-import type { EventItem } from '../../lib/types';
+import { EventsApi, ClubsApi, ApiError } from '../../lib/api';
+import type { Club, EventItem } from '../../lib/types';
 
 type Draft = Omit<EventItem, 'id' | 'order_index'>;
 
-const EMPTY: Draft = { chapter: '', page: '', title: '', tag: '', date_label: '', description: '' };
+const EMPTY: Draft = { club_id: null, chapter: '', page: '', title: '', tag: '', date_label: '', description: '' };
 
-function EventEditor({ draft, onChange }: { draft: Draft; onChange: (d: Draft) => void }) {
+function EventEditor({ draft, onChange, clubs }: { draft: Draft; onChange: (d: Draft) => void; clubs: Club[] }) {
   return (
     <div className="admin-card-body">
       <div className="admin-form-grid">
@@ -25,6 +25,16 @@ function EventEditor({ draft, onChange }: { draft: Draft; onChange: (d: Draft) =
         <label className="admin-field">
           <span>Date</span>
           <input value={draft.date_label} onChange={(e) => onChange({ ...draft, date_label: e.target.value })} />
+        </label>
+        <label className="admin-field">
+          <span>Club</span>
+          <select
+            value={draft.club_id ?? ''}
+            onChange={(e) => onChange({ ...draft, club_id: e.target.value || null })}
+          >
+            <option value="">committee-wide</option>
+            {clubs.map((c) => <option key={c.id} value={c.id}>{c.name}</option>)}
+          </select>
         </label>
       </div>
       <label className="admin-field">
@@ -45,6 +55,7 @@ function EventEditor({ draft, onChange }: { draft: Draft; onChange: (d: Draft) =
 
 export const EventsPanel: React.FC = () => {
   const [events, setEvents] = useState<EventItem[] | null>(null);
+  const [clubs, setClubs] = useState<Club[]>([]);
   const [drafts, setDrafts] = useState<Record<string, Draft>>({});
   const [newDraft, setNewDraft] = useState<Draft | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -55,7 +66,10 @@ export const EventsPanel: React.FC = () => {
     setDrafts(Object.fromEntries(list.map((e) => [e.id, { ...e }])));
   });
 
-  useEffect(() => { load().catch((err) => setError(err instanceof ApiError ? err.message : 'load failed.')); }, []);
+  useEffect(() => {
+    load().catch((err) => setError(err instanceof ApiError ? err.message : 'load failed.'));
+    ClubsApi.list().then(setClubs).catch(() => undefined);
+  }, []);
 
   const save = async (id: string) => {
     setBusyId(id);
@@ -133,7 +147,7 @@ export const EventsPanel: React.FC = () => {
       {newDraft && (
         <div className="admin-card admin-card--new">
           <div className="admin-card-header">New event</div>
-          <EventEditor draft={newDraft} onChange={setNewDraft} />
+          <EventEditor draft={newDraft} onChange={setNewDraft} clubs={clubs} />
           <div className="admin-card-actions">
             <button className="admin-btn admin-btn-primary" disabled={busyId === '__new__'} onClick={create}>Create</button>
             <button className="admin-btn admin-btn-ghost" onClick={() => setNewDraft(null)}>Cancel</button>
@@ -154,6 +168,7 @@ export const EventsPanel: React.FC = () => {
           <EventEditor
             draft={drafts[ev.id] ?? { ...ev }}
             onChange={(d) => setDrafts((prev) => ({ ...prev, [ev.id]: d }))}
+            clubs={clubs}
           />
           <div className="admin-card-actions">
             <button className="admin-btn admin-btn-primary" disabled={busyId === ev.id} onClick={() => save(ev.id)}>

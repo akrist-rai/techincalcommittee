@@ -39,7 +39,7 @@ const NEW_SECTION_DEFAULTS: Record<SectionType, Draft> = {
 const TYPE_LABELS: Record<SectionType, string> = {
   clubs: 'Clubs grid',
   members: 'Members grid',
-  events: 'Event timeline',
+  events: 'Roadmap timeline',
   stats: 'Stats & badges',
   custom: 'Text / image panel',
 };
@@ -72,7 +72,7 @@ function SectionEditor({ draft, onChange }: { draft: Draft; onChange: (d: Draft)
       {(draft.type === 'members' || draft.type === 'events') && (
         <p className="admin-hint">
           This section shows the full {draft.type === 'members' ? 'roster' : 'timeline'} — manage the actual
-          {draft.type === 'members' ? ' members' : ' events'} under the {draft.type === 'members' ? 'Members' : 'Events'} tab.
+          {draft.type === 'members' ? ' members' : ' roadmap stops'} under the {draft.type === 'members' ? 'Members' : 'Roadmap'} tab.
         </p>
       )}
 

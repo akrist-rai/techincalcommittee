@@ -15,7 +15,7 @@ export const Nav: React.FC<{ links: PageNavLink[] }> = ({ links }) => {
     <>
       <div className="topbar">
         <Link className="tb-logo" to="/">
-          <span className="tb-mark-ring"><span className="tb-mark">TC</span></span>
+          <span className="tb-mark-outer"><span className="tb-mark">TC</span></span>
           <span className="tb-wordmark">TECHNICAL<em>COMMITTEE</em></span>
         </Link>
         <nav className="tb-nav" aria-label="Primary">

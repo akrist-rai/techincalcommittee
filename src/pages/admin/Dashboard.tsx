@@ -27,7 +27,7 @@ export const Dashboard: React.FC = () => {
             Members
           </NavLink>
           <NavLink to="/admin/events" className={({ isActive }) => `admin-nav-link${isActive ? ' active' : ''}`}>
-            Events
+            Roadmap
           </NavLink>
           <NavLink to="/admin/media" className={({ isActive }) => `admin-nav-link${isActive ? ' active' : ''}`}>
             Media

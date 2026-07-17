@@ -134,10 +134,10 @@ export const EventsPanel: React.FC = () => {
   return (
     <div>
       <div className="admin-page-header">
-        <h1>Events</h1>
+        <h1>Roadmap</h1>
         {!newDraft && (
           <button className="admin-btn admin-btn-primary" onClick={() => setNewDraft({ ...EMPTY })}>
-            + Add event
+            + Add roadmap stop
           </button>
         )}
       </div>

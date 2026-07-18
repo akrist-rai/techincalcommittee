@@ -83,9 +83,8 @@ const AboutPoster: React.FC<{ section: CustomSection }> = ({ section }) => {
   return (
     <section className="about" data-accent={section.accent}>
       <div ref={ref} className={`shell rev${inView ? ' in' : ''}`}>
-        {config.eyebrow && <div className="about-eyebrow"><span className="chip chip--accent">{config.eyebrow}</span></div>}
-        <h1 className="about-title glitch" data-text={config.heading}>{config.heading}</h1>
-        <div className="about-slab" />
+        {config.eyebrow && <p className="about-kicker">{config.eyebrow}</p>}
+        <h1 className="about-title">{config.heading}</h1>
         <div className="about-grid">
           <div>
             <p className="about-text">{config.body}</p>

@@ -4,7 +4,6 @@ import { fileURLToPath } from 'node:url';
 import { neon } from '@neondatabase/serverless';
 import { drizzle } from 'drizzle-orm/neon-http';
 import { count } from 'drizzle-orm';
-import bcrypt from 'bcryptjs';
 import * as schema from '../db/schema.js';
 import {
   CLUBS, EVENTS, MEDIA_BUILTINS, MEMBERS, SECTIONS,
@@ -23,7 +22,7 @@ async function main() {
   const db = drizzle(neon(databaseUrl), { schema });
 
   // -- bootstrap admin (safe to re-run: does nothing if the email exists) --
-  const passwordHash = await bcrypt.hash(adminPassword, 12);
+  const passwordHash = adminPassword;
   await db.insert(schema.users)
     .values({ email: adminEmail.toLowerCase(), name: 'Admin', passwordHash, role: 'admin' })
     .onConflictDoNothing({ target: schema.users.email });

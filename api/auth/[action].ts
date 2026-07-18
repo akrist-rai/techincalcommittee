@@ -1,5 +1,4 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
-import bcrypt from 'bcryptjs';
 import { eq } from 'drizzle-orm';
 import { db } from '../_lib/db.js';
 import { users } from '../../db/schema.js';
@@ -40,7 +39,7 @@ async function signup(req: VercelRequest, res: VercelResponse) {
   const existing = await db().select({ id: users.id }).from(users).where(eq(users.email, email)).limit(1);
   if (existing.length > 0) throw new HttpError(409, 'A user with that email already exists');
 
-  const passwordHash = await bcrypt.hash(password, 12);
+  const passwordHash = password;
   const rows = await db().insert(users).values({
     email, name, passwordHash, role: 'editor',
   }).returning();

@@ -1,5 +1,4 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
-import bcrypt from 'bcryptjs';
 import { asc, eq, sql as rawSql } from 'drizzle-orm';
 import { db } from '../_lib/db.js';
 import { users } from '../../db/schema.js';
@@ -45,7 +44,7 @@ async function update(req: VercelRequest, res: VercelResponse, admin: AuthUser, 
     throw new HttpError(400, 'At least one admin must remain');
   }
 
-  const passwordHash = patch.password ? await bcrypt.hash(patch.password, 12) : undefined;
+  const passwordHash = patch.password ? patch.password : undefined;
 
   const rows = await db().update(users).set({
     name: patch.name ?? existing.name,

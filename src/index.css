@@ -937,7 +937,7 @@ img { display: block; }
 
 .timeline-card:hover {
   transform: translateY(-6px);
-  box-shadow: 0 26px 48px -16px color-mix(in srgb, var(--accent) 55%, transparent), var(--shadow-sm);
+  box-shadow: 0 26px 48px -16px color-mix(in srgb, var(--accent) 55%, transparent), var(--shadow-lift);
 }
 
 .timeline-card-img {

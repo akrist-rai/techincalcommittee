@@ -1,5 +1,5 @@
 import React from 'react';
-import { Link, Outlet } from 'react-router-dom';
+import { Outlet } from 'react-router-dom';
 import { SiteDataProvider, useSiteData } from '../lib/site-data-context';
 import { Nav, type PageNavLink } from '../components/Nav';
 import { Ambient } from '../components/Ambient';
@@ -29,11 +29,7 @@ const PublicLayoutInner: React.FC = () => {
         <Outlet />
       </main>
       <footer className="footer">
-        <div className="shell">
-          <div className="footer-row">
-            <Link to="/admin/login">Committee login</Link>
-          </div>
-        </div>
+        <div className="shell" />
       </footer>
     </>
   );

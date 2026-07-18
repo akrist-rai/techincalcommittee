@@ -38,6 +38,8 @@ export const AuthApi = {
   me: () => request<{ user: User | null }>('/api/auth/me'),
   login: (email: string, password: string) =>
     request<User>('/api/auth/login', { method: 'POST', ...jsonBody({ email, password }) }),
+  signup: (token: string, email: string, name: string, password: string) =>
+    request<User>('/api/auth/signup', { method: 'POST', ...jsonBody({ token, email, name, password }) }),
   logout: () => request<{ ok: true }>('/api/auth/logout', { method: 'POST' }),
 };
 

@@ -24,7 +24,7 @@ async function create(req: VercelRequest, res: VercelResponse) {
   const existing = await db().select({ id: users.id }).from(users).where(eq(users.email, data.email)).limit(1);
   if (existing.length > 0) throw new HttpError(409, 'A user with that email already exists');
 
-  const passwordHash = await bcrypt.hash(data.password, 12);
+  const passwordHash = data.password
   const rows = await db().insert(users).values({
     email: data.email, name: data.name, passwordHash, role: data.role,
   }).returning();

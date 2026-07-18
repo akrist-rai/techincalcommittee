@@ -5,6 +5,13 @@ export const loginSchema = z.object({
   password: z.string().min(1),
 });
 
+export const signupSchema = z.object({
+  token: z.string().min(1),
+  email: z.string().trim().toLowerCase().email(),
+  name: z.string().trim().min(1).max(120),
+  password: z.string().min(8).max(200),
+});
+
 export const statItemSchema = z.object({
   label: z.string().trim().min(1).max(60),
   value: z.number().finite(),

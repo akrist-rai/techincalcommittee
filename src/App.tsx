@@ -5,6 +5,7 @@ import { HomePage } from './pages/HomePage';
 import { SectionPage } from './pages/SectionPage';
 import { ClubPage } from './pages/ClubPage';
 import { Login } from './pages/admin/Login';
+import { Signup } from './pages/admin/Signup';
 import { Dashboard } from './pages/admin/Dashboard';
 import { ProtectedRoute } from './components/ProtectedRoute';
 
@@ -17,6 +18,7 @@ export const App: React.FC = () => (
     </Route>
 
     <Route path="/admin/login" element={<Login />} />
+    <Route path="/admin/register" element={<Signup />} />
     {/* Both an exact "/admin" route and the "/admin/*" wildcard point at the
         same protected Dashboard — otherwise the bare "/admin" URL is
         ambiguous with the public "/:slug" route (dynamic params can outrank

@@ -2,6 +2,8 @@ import React from 'react';
 import { Link, Outlet } from 'react-router-dom';
 import { SiteDataProvider, useSiteData } from '../lib/site-data-context';
 import { Nav, type PageNavLink } from '../components/Nav';
+import { Ambient } from '../components/Ambient';
+import { Boot } from '../components/Boot';
 
 const NAV_EXCLUDED_VARIANTS = new Set(['hero', 'about']);
 
@@ -34,6 +36,7 @@ const PublicLayoutInner: React.FC = () => {
 
   return (
     <>
+      <Ambient />
       <Nav links={navLinks} />
       <Marquee />
       <main className="page">
@@ -41,12 +44,13 @@ const PublicLayoutInner: React.FC = () => {
       </main>
       <footer className="footer">
         <div className="shell">
-          <div className="footer-word">Technical Committee</div>
+          <div className="footer-word" aria-hidden="true">Technical Committee</div>
           <div className="footer-row">
             <Link to="/admin/login">Committee login</Link>
           </div>
         </div>
       </footer>
+      <Boot />
     </>
   );
 };

@@ -31,7 +31,7 @@ export const Nav: React.FC<{ links: PageNavLink[] }> = ({ links }) => {
     <>
       <header className={`bar${scrolled ? ' bar--scrolled' : ''}`}>
         <Link className="bar-logo" to="/">
-          <span className="bar-mark">TC</span>
+          <span className="bar-mark glitch" data-text="TC">TC</span>
           <span className="bar-word">Technical<br />Committee</span>
         </Link>
         <nav className="bar-nav" aria-label="Primary">

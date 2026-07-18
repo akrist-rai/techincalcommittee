@@ -43,12 +43,13 @@ function ButtonRow({ buttons, className }: { buttons: CustomSection['config']['b
 }
 
 function SectionBand({ section, fileNo }: { section: Section; fileNo: number }) {
+  const [ref, inView] = useReveal<HTMLDivElement>();
   return (
-    <div className="sec-band">
+    <div ref={ref} className={`sec-band rev${inView ? ' in' : ''}`}>
       <div className="shell">
         <div className="sec-band-row">
-          <span className="sec-index">{String(fileNo).padStart(2, '0')}</span>
-          <h2 className="sec-title">{section.title || section.type}</h2>
+          <span className="sec-index">FILE_{String(fileNo).padStart(2, '0')}</span>
+          <h2 className="sec-title glitch" data-text={section.title || section.type}>{section.title || section.type}</h2>
         </div>
         {section.subtitle && <p className="sec-sub">{section.subtitle}</p>}
       </div>
@@ -58,15 +59,16 @@ function SectionBand({ section, fileNo }: { section: Section; fileNo: number }) 
 
 const HeroPoster: React.FC<{ section: CustomSection }> = ({ section }) => {
   const { config } = section;
+  const [ref, inView] = useReveal<HTMLDivElement>();
   return (
     <section className="hero" data-accent={section.accent}>
       {config.imageUrl && (
         <div className="hero-img"><img src={config.imageUrl} alt={config.imageAlt ?? ''} /></div>
       )}
-      <div className="hero-inner">
+      <div ref={ref} className={`hero-inner rev${inView ? ' in' : ''}`}>
         <div className="shell">
           {config.eyebrow && <span className="chip chip--accent">{config.eyebrow}</span>}
-          <h1 className="hero-title">{config.heading}</h1>
+          <h1 className="hero-title glitch" data-text={config.heading}>{config.heading}</h1>
           {config.body && <p className="hero-body">{config.body}</p>}
           <ButtonRow buttons={config.buttons} className="hero-btns" />
         </div>
@@ -77,11 +79,12 @@ const HeroPoster: React.FC<{ section: CustomSection }> = ({ section }) => {
 
 const AboutPoster: React.FC<{ section: CustomSection }> = ({ section }) => {
   const { config } = section;
+  const [ref, inView] = useReveal<HTMLDivElement>();
   return (
     <section className="about" data-accent={section.accent}>
-      <div className="shell">
+      <div ref={ref} className={`shell rev${inView ? ' in' : ''}`}>
         {config.eyebrow && <div className="about-eyebrow"><span className="chip chip--accent">{config.eyebrow}</span></div>}
-        <h1 className="about-title">{config.heading}</h1>
+        <h1 className="about-title glitch" data-text={config.heading}>{config.heading}</h1>
         <div className="about-slab" />
         <div className="about-grid">
           <div>
@@ -99,11 +102,12 @@ const AboutPoster: React.FC<{ section: CustomSection }> = ({ section }) => {
 
 const CtaBand: React.FC<{ section: CustomSection }> = ({ section }) => {
   const { config } = section;
+  const [ref, inView] = useReveal<HTMLDivElement>();
   return (
     <section className="cta" data-accent={section.accent}>
-      <div className="shell">
+      <div ref={ref} className={`shell rev${inView ? ' in' : ''}`}>
         {config.eyebrow && <span className="chip">{config.eyebrow}</span>}
-        <h2 className="cta-title">{config.heading}</h2>
+        <h2 className="cta-title glitch" data-text={config.heading}>{config.heading}</h2>
         {config.body && <p className="cta-body">{config.body}</p>}
         <ButtonRow buttons={config.buttons} className="cta-btns" />
       </div>
@@ -114,10 +118,11 @@ const CtaBand: React.FC<{ section: CustomSection }> = ({ section }) => {
 const PanelBlock: React.FC<{ section: CustomSection }> = ({ section }) => {
   const { config } = section;
   const layout = config.layout ?? 'text-only';
+  const [ref, inView] = useReveal<HTMLDivElement>();
   return (
     <section className="sec" data-accent={section.accent}>
       <div className="shell">
-        <div className={`block block--${layout}`}>
+        <div ref={ref} className={`block block--${layout} rev${inView ? ' in' : ''}`}>
           {config.badge && <div className="block-badge">{config.badge}</div>}
           {layout !== 'text-only' && config.imageUrl && (
             <div className="block-img"><img src={config.imageUrl} alt={config.imageAlt ?? ''} /></div>
@@ -136,12 +141,13 @@ const PanelBlock: React.FC<{ section: CustomSection }> = ({ section }) => {
 
 const ClubsView: React.FC<{ section: ClubsSection; fileNo: number }> = ({ section, fileNo }) => {
   const items = section.items ?? [];
+  const [ref, inView] = useReveal<HTMLDivElement>();
   return (
     <section className="sec" data-accent={section.accent}>
       <SectionBand section={section} fileNo={fileNo} />
       <div className="sec-body">
         <div className="shell">
-          <div className="club-grid">
+          <div ref={ref} className={`club-grid rev${inView ? ' in' : ''}`}>
             {items.map((c) => {
               const count = c.members?.length ?? 0;
               return (
@@ -149,13 +155,13 @@ const ClubsView: React.FC<{ section: ClubsSection; fileNo: number }> = ({ sectio
                   key={c.id}
                   to={`/club/${c.slug}`}
                   className="club-tile"
-                  style={{ '--tile-accent': `var(--${c.accent})` } as React.CSSProperties}
+                  data-accent={c.accent}
                 >
                   {c.img_url && (
                     <div className="club-tile-img"><img src={c.img_url} alt="" /></div>
                   )}
                   <div className="club-tile-body">
-                    <span className="club-tile-count">{count} member{count === 1 ? '' : 's'}</span>
+                    <span className="chip chip--accent club-tile-count">{count} member{count === 1 ? '' : 's'}</span>
                     <div className="club-tile-name">{c.name}</div>
                     {c.tagline && <p className="club-tile-tag">{c.tagline}</p>}
                     <div className="club-tile-go">See the club →</div>
@@ -263,12 +269,15 @@ export const CrewGrid: React.FC<{ items: NonNullable<MembersSection['items']> }>
 
 const MembersView: React.FC<{ section: MembersSection; fileNo: number }> = ({ section, fileNo }) => {
   const items = section.items ?? [];
+  const [ref, inView] = useReveal<HTMLDivElement>();
   return (
     <section className="sec" data-accent={section.accent}>
       <SectionBand section={section} fileNo={fileNo} />
       <div className="sec-body">
         <div className="shell">
-          <CrewGrid items={items} />
+          <div ref={ref} className={`rev${inView ? ' in' : ''}`}>
+            <CrewGrid items={items} />
+          </div>
         </div>
       </div>
     </section>
@@ -277,11 +286,12 @@ const MembersView: React.FC<{ section: MembersSection; fileNo: number }> = ({ se
 
 const StatsView: React.FC<{ section: StatsSection; fileNo: number }> = ({ section, fileNo }) => {
   const { stats, badges } = section.config;
+  const [ref, inView] = useReveal<HTMLDivElement>();
   return (
     <section className="sec" data-accent={section.accent}>
       <SectionBand section={section} fileNo={fileNo} />
       <div className="sec-body">
-        <div className="shell">
+        <div ref={ref} className={`shell rev${inView ? ' in' : ''}`}>
           <div className="stat-grid">
             {stats.map((s, i) => (
               <div className="stat-block" key={i}>

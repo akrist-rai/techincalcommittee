@@ -15,7 +15,7 @@ export const ClubPage: React.FC = () => {
     return (
       <div className="page-not-found">
         <Link className="page-back" to="/clubs">← Back to clubs</Link>
-        <h1>404. Never heard of them.</h1>
+        <h1 className="glitch" data-text="404. Never heard of them.">404. Never heard of them.</h1>
       </div>
     );
   }
@@ -32,7 +32,7 @@ export const ClubPage: React.FC = () => {
           <div className="clubpage-grid">
             <div>
               {club.tagline && <span className="clubpage-tagline">{club.tagline}</span>}
-              <h1 className="clubpage-name">{club.name}</h1>
+              <h1 className="clubpage-name glitch" data-text={club.name}>{club.name}</h1>
               {club.description && <p className="clubpage-desc">{club.description}</p>}
             </div>
             {club.img_url && (

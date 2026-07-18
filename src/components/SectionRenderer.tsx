@@ -1,8 +1,33 @@
-import React from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
+import { useSiteData } from '../lib/site-data-context';
 import type {
   ClubsSection, CustomSection, EventsSection, MembersSection, Section, StatsSection,
 } from '../lib/types';
+
+function useReveal<T extends HTMLElement>() {
+  const ref = useRef<T | null>(null);
+  const [inView, setInView] = useState(false);
+
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    if (typeof IntersectionObserver === 'undefined') { setInView(true); return; }
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setInView(true);
+          observer.disconnect();
+        }
+      },
+      { threshold: 0.15, rootMargin: '0px 0px -60px 0px' },
+    );
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
+
+  return [ref, inView] as const;
+}
 
 function ButtonRow({ buttons, className }: { buttons: CustomSection['config']['buttons']; className: string }) {
   if (!buttons || buttons.length === 0) return null;
@@ -145,23 +170,55 @@ const ClubsView: React.FC<{ section: ClubsSection; fileNo: number }> = ({ sectio
   );
 };
 
-export const RoadmapList: React.FC<{ items: NonNullable<EventsSection['items']> }> = ({ items }) => (
-  <div className="road">
-    {items.map((t, i) => (
-      <div className="road-row" key={t.id}>
-        <div className="road-num">{t.chapter || String(i + 1).padStart(2, '0')}</div>
-        <div>
-          <h3 className="road-title">{t.title}</h3>
-          <div className="road-meta">
-            {t.tag && <span className="chip chip--accent">{t.tag}</span>}
-          </div>
-          {t.description && <p className="road-desc">{t.description}</p>}
+type EventEntry = NonNullable<EventsSection['items']>[number];
+
+const TimelineItem: React.FC<{ event: EventEntry; index: number; clubName?: string; image: string }> = ({
+  event, index, clubName, image,
+}) => {
+  const [ref, inView] = useReveal<HTMLDivElement>();
+  return (
+    <div ref={ref} className={`timeline-item${inView ? ' is-in' : ''}`}>
+      <div className="timeline-node">{event.chapter || String(index + 1).padStart(2, '0')}</div>
+      <div className="timeline-card">
+        <div className="timeline-card-img">
+          {image ? <img src={image} alt="" loading="lazy" /> : <div className="timeline-card-img--empty" />}
         </div>
-        <div className="road-date">{t.date_label}</div>
+        <div className="timeline-card-body">
+          <div className="timeline-card-meta">
+            {event.date_label && <span className="timeline-date">{event.date_label}</span>}
+            {event.tag && <span className="chip chip--accent">{event.tag}</span>}
+            {clubName && <span className="chip">{clubName}</span>}
+          </div>
+          <h3 className="timeline-title">{event.title}</h3>
+          {event.description && <p className="timeline-desc">{event.description}</p>}
+        </div>
       </div>
-    ))}
-  </div>
-);
+    </div>
+  );
+};
+
+export const TimelineList: React.FC<{ items: NonNullable<EventsSection['items']> }> = ({ items }) => {
+  const { clubs } = useSiteData();
+  const clubById = new Map(clubs.map((c) => [c.id, c]));
+
+  return (
+    <div className="timeline">
+      <div className="timeline-spine" aria-hidden="true" />
+      {items.map((ev, i) => {
+        const club = ev.club_id ? clubById.get(ev.club_id) : undefined;
+        return (
+          <TimelineItem
+            key={ev.id}
+            event={ev}
+            index={i}
+            clubName={club?.name}
+            image={ev.img_url || club?.img_url || ''}
+          />
+        );
+      })}
+    </div>
+  );
+};
 
 const EventsView: React.FC<{ section: EventsSection; fileNo: number }> = ({ section, fileNo }) => {
   const items = section.items ?? [];
@@ -170,7 +227,7 @@ const EventsView: React.FC<{ section: EventsSection; fileNo: number }> = ({ sect
       <SectionBand section={section} fileNo={fileNo} />
       <div className="sec-body">
         <div className="shell">
-          <RoadmapList items={items} />
+          <TimelineList items={items} />
         </div>
       </div>
     </section>

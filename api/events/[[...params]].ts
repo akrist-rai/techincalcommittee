@@ -23,6 +23,7 @@ async function create(req: VercelRequest, res: VercelResponse) {
     tag: data.tag,
     dateLabel: data.date_label,
     description: data.description,
+    imgUrl: data.img_url,
     orderIndex: rawSql`(select coalesce(max(order_index), -1) + 1 from events)`,
   }).returning();
   json(res, 201, serializeEvent(rows[0]));
@@ -44,6 +45,7 @@ async function update(req: VercelRequest, res: VercelResponse, id: string) {
     tag: patch.tag ?? existing.tag,
     dateLabel: patch.date_label ?? existing.dateLabel,
     description: patch.description ?? existing.description,
+    imgUrl: patch.img_url ?? existing.imgUrl,
     orderIndex: patch.order_index ?? existing.orderIndex,
     updatedAt: new Date(),
   }).where(eq(events.id, id)).returning();

@@ -33,6 +33,7 @@ export function serializeEvent(e: InferSelectModel<typeof events>) {
     tag: e.tag,
     date_label: e.dateLabel,
     description: e.description,
+    img_url: e.imgUrl,
     order_index: e.orderIndex,
     created_at: e.createdAt,
     updated_at: e.updatedAt,

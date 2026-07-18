@@ -35,6 +35,7 @@ export interface EventItem {
   tag: string;
   date_label: string;
   description: string;
+  img_url: string;
   order_index: number;
 }
 

@@ -1,10 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import { EventsApi, ClubsApi, ApiError } from '../../lib/api';
 import type { Club, EventItem } from '../../lib/types';
+import { MediaPicker } from '../../components/MediaPicker';
 
 type Draft = Omit<EventItem, 'id' | 'order_index'>;
 
-const EMPTY: Draft = { club_id: null, chapter: '', page: '', title: '', tag: '', date_label: '', description: '' };
+const EMPTY: Draft = {
+  club_id: null, chapter: '', page: '', title: '', tag: '', date_label: '', description: '', img_url: '',
+};
 
 function EventEditor({ draft, onChange, clubs }: { draft: Draft; onChange: (d: Draft) => void; clubs: Club[] }) {
   return (
@@ -49,6 +52,11 @@ function EventEditor({ draft, onChange, clubs }: { draft: Draft; onChange: (d: D
           onChange={(e) => onChange({ ...draft, description: e.target.value })}
         />
       </label>
+      <MediaPicker
+        label="Timeline image"
+        value={draft.img_url}
+        onChange={(url) => onChange({ ...draft, img_url: url })}
+      />
     </div>
   );
 }
@@ -134,10 +142,10 @@ export const EventsPanel: React.FC = () => {
   return (
     <div>
       <div className="admin-page-header">
-        <h1>Roadmap</h1>
+        <h1>Events</h1>
         {!newDraft && (
           <button className="admin-btn admin-btn-primary" onClick={() => setNewDraft({ ...EMPTY })}>
-            + Add roadmap stop
+            + Add event
           </button>
         )}
       </div>

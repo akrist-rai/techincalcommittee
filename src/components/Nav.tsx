@@ -10,6 +10,7 @@ export interface PageNavLink {
 
 export const Nav: React.FC<{ links: PageNavLink[] }> = ({ links }) => {
   const [open, setOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
   const location = useLocation();
 
   // close the overlay on route change and lock body scroll while it's open
@@ -19,9 +20,16 @@ export const Nav: React.FC<{ links: PageNavLink[] }> = ({ links }) => {
     return () => { document.body.style.overflow = ''; };
   }, [open]);
 
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 8);
+    onScroll();
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => window.removeEventListener('scroll', onScroll);
+  }, []);
+
   return (
     <>
-      <header className="bar">
+      <header className={`bar${scrolled ? ' bar--scrolled' : ''}`}>
         <Link className="bar-logo" to="/">
           <span className="bar-mark">TC</span>
           <span className="bar-word">Technical<br />Committee</span>
@@ -33,15 +41,21 @@ export const Nav: React.FC<{ links: PageNavLink[] }> = ({ links }) => {
             </NavLink>
           ))}
         </nav>
-        <a className="bar-cta" href={EPHEMERAL_URL}>Enter Ephemeral</a>
+        <a className="bar-cta" href={EPHEMERAL_URL}>
+          <span>Enter Ephemeral</span>
+          <span className="bar-cta-arrow" aria-hidden="true">→</span>
+        </a>
         <button
           type="button"
-          className="bar-burger"
+          className={`bar-burger${open ? ' is-open' : ''}`}
           aria-expanded={open}
           aria-controls="site-menu"
+          aria-label="Open menu"
           onClick={() => setOpen(true)}
         >
-          Menu
+          <span className="bar-burger-lines" aria-hidden="true">
+            <span /><span /><span />
+          </span>
         </button>
       </header>
 
@@ -49,15 +63,33 @@ export const Nav: React.FC<{ links: PageNavLink[] }> = ({ links }) => {
         <div id="site-menu" className="menu-overlay" role="dialog" aria-modal="true" aria-label="Menu">
           <div className="menu-overlay-top">
             <span className="menu-overlay-word">Technical Committee</span>
-            <button type="button" className="menu-close" onClick={() => setOpen(false)}>Close</button>
+            <button type="button" className="menu-close" onClick={() => setOpen(false)}>
+              <span className="menu-close-lines" aria-hidden="true"><span /><span /></span>
+              Close
+            </button>
           </div>
-          <Link className="menu-link" to="/">Home</Link>
-          {links.map((l) => (
-            <NavLink key={l.to} className={({ isActive }) => `menu-link${isActive ? ' active' : ''}`} to={l.to}>
-              {l.label}
-            </NavLink>
-          ))}
-          <a className="menu-link menu-link--cta" href={EPHEMERAL_URL}>Enter Ephemeral →</a>
+          <div className="menu-links">
+            <Link className="menu-link" to="/" style={{ '--i': 0 } as React.CSSProperties}>
+              <span className="menu-link-index">00</span>Home
+            </Link>
+            {links.map((l, i) => (
+              <NavLink
+                key={l.to}
+                className={({ isActive }) => `menu-link${isActive ? ' active' : ''}`}
+                style={{ '--i': i + 1 } as React.CSSProperties}
+                to={l.to}
+              >
+                <span className="menu-link-index">{String(i + 1).padStart(2, '0')}</span>{l.label}
+              </NavLink>
+            ))}
+            <a
+              className="menu-link menu-link--cta"
+              href={EPHEMERAL_URL}
+              style={{ '--i': links.length + 1 } as React.CSSProperties}
+            >
+              <span className="menu-link-index">→</span>Enter Ephemeral
+            </a>
+          </div>
         </div>
       )}
     </>

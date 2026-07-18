@@ -15,7 +15,7 @@
   max-width: 380px;
   background: var(--paper);
   border: 3px solid var(--void);
-  box-shadow: 8px 8px 0 var(--red);
+  box-shadow: var(--shadow-md, 0 20px 44px -16px rgba(17, 17, 17, 0.32));
   padding: 2rem;
   display: flex;
   flex-direction: column;
@@ -371,7 +371,7 @@
 .modal-card {
   background: var(--paper);
   border: 3px solid var(--void);
-  box-shadow: 8px 8px 0 var(--red);
+  box-shadow: var(--shadow-md, 0 20px 44px -16px rgba(17, 17, 17, 0.32));
   width: 100%;
   max-width: 640px;
   max-height: 80vh;
@@ -441,7 +441,7 @@
   top: calc(100% + 0.4rem);
   background: var(--paper);
   border: 2px solid var(--void);
-  box-shadow: 4px 4px 0 var(--void);
+  box-shadow: var(--shadow-sm, 0 6px 18px -8px rgba(17, 17, 17, 0.28));
   display: flex;
   flex-direction: column;
   z-index: 50;

@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { useSiteData } from '../lib/site-data-context';
-import { CrewGrid, RoadmapList } from '../components/SectionRenderer';
+import { CrewGrid, TimelineList } from '../components/SectionRenderer';
 
 export const ClubPage: React.FC = () => {
   const { clubs, sections } = useSiteData();
@@ -63,9 +63,9 @@ export const ClubPage: React.FC = () => {
             <span className="clubpage-sec-count">{events.length} stops</span>
           </h2>
           {events.length === 0 ? (
-            <p className="clubpage-empty">Nothing scheduled yet. Check the committee-wide roadmap in the meantime.</p>
+            <p className="clubpage-empty">Nothing scheduled yet. Check the committee-wide events page in the meantime.</p>
           ) : (
-            <RoadmapList items={events} />
+            <TimelineList items={events} />
           )}
         </div>
       </section>

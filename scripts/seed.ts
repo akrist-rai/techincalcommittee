@@ -76,7 +76,7 @@ async function main() {
     await db.insert(schema.events).values(EVENTS.map((e, i) => ({
       clubId: e.clubSlug ? (clubIdBySlug.get(e.clubSlug) ?? null) : null,
       chapter: e.chapter, page: e.page, title: e.title, tag: e.tag, dateLabel: e.date_label,
-      description: e.description, orderIndex: i,
+      description: e.description, imgUrl: e.img_url, orderIndex: i,
     })));
     console.log(`Seeded ${EVENTS.length} events.`);
   } else {

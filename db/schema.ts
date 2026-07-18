@@ -65,6 +65,7 @@ export const events = pgTable('events', {
   tag: text('tag').notNull().default(''),
   dateLabel: text('date_label').notNull().default(''),
   description: text('description').notNull().default(''),
+  imgUrl: text('img_url').notNull().default(''),
   orderIndex: integer('order_index').notNull().default(0),
   createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
   updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),

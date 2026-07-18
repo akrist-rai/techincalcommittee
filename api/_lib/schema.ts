@@ -32,6 +32,7 @@ export const eventSchema = z.object({
   tag: z.string().trim().max(60).default(''),
   date_label: z.string().trim().max(60).default(''),
   description: z.string().trim().max(1000).default(''),
+  img_url: z.string().trim().max(2000).default(''),
 });
 
 export const eventUpdateSchema = eventSchema.partial().extend({

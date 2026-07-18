@@ -25,7 +25,7 @@ function toDraft(s: Section): Draft {
 const NEW_SECTION_DEFAULTS: Record<SectionType, Draft> = {
   clubs: { type: 'clubs', title: 'Clubs', subtitle: '', visible: true, accent: 'violet', config: {} },
   members: { type: 'members', title: 'Roster', subtitle: '', visible: true, accent: 'violet', config: {} },
-  events: { type: 'events', title: 'Roadmap', subtitle: '', visible: true, accent: 'yellow', config: {} },
+  events: { type: 'events', title: 'Events', subtitle: '', visible: true, accent: 'yellow', config: {} },
   stats: {
     type: 'stats', title: 'Stats', subtitle: '', visible: true, accent: 'cyan',
     config: { stats: [], badges: [] } satisfies StatsConfig,
@@ -39,7 +39,7 @@ const NEW_SECTION_DEFAULTS: Record<SectionType, Draft> = {
 const TYPE_LABELS: Record<SectionType, string> = {
   clubs: 'Clubs grid',
   members: 'Members grid',
-  events: 'Roadmap timeline',
+  events: 'Events timeline',
   stats: 'Stats & badges',
   custom: 'Text / image panel',
 };
@@ -72,7 +72,7 @@ function SectionEditor({ draft, onChange }: { draft: Draft; onChange: (d: Draft)
       {(draft.type === 'members' || draft.type === 'events') && (
         <p className="admin-hint">
           This section shows the full {draft.type === 'members' ? 'roster' : 'timeline'} — manage the actual
-          {draft.type === 'members' ? ' members' : ' roadmap stops'} under the {draft.type === 'members' ? 'Members' : 'Roadmap'} tab.
+          {draft.type === 'members' ? ' members' : ' events'} under the {draft.type === 'members' ? 'Members' : 'Events'} tab.
         </p>
       )}
 

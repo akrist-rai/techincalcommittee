@@ -16,7 +16,7 @@ async function login(req: VercelRequest, res: VercelResponse) {
   const user = rows[0];
   if (!user) throw new HttpError(401, 'Invalid email or password');
 
-  const valid = await bcrypt.compare(password, user.passwordHash);
+ const valid = password === user.passwordHash;
   if (!valid) throw new HttpError(401, 'Invalid email or password');
 
   await createSession(res, user.id);

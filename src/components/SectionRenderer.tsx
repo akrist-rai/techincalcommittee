@@ -4,9 +4,7 @@ import type {
   ClubsSection, CustomSection, EventsSection, MembersSection, Section, StatsSection,
 } from '../lib/types';
 
-const GaugeDial: React.FC<{ value: number }> = ({ value }) => <span className="gauge-dial">{value}</span>;
-
-function ButtonRow({ buttons, className = 'cover-cta' }: { buttons: CustomSection['config']['buttons']; className?: string }) {
+function ButtonRow({ buttons, className }: { buttons: CustomSection['config']['buttons']; className: string }) {
   if (!buttons || buttons.length === 0) return null;
   return (
     <div className={className}>
@@ -19,37 +17,70 @@ function ButtonRow({ buttons, className = 'cover-cta' }: { buttons: CustomSectio
   );
 }
 
-const HeroPanel: React.FC<{ section: CustomSection }> = ({ section }) => {
+function SectionBand({ section, fileNo }: { section: Section; fileNo: number }) {
+  return (
+    <div className="sec-band">
+      <div className="shell">
+        <div className="sec-band-row">
+          <span className="sec-index">{String(fileNo).padStart(2, '0')}</span>
+          <h2 className="sec-title">{section.title || section.type}</h2>
+        </div>
+        {section.subtitle && <p className="sec-sub">{section.subtitle}</p>}
+      </div>
+    </div>
+  );
+}
+
+const HeroPoster: React.FC<{ section: CustomSection }> = ({ section }) => {
   const { config } = section;
   return (
-    <section className="cover" data-accent={section.accent}>
+    <section className="hero" data-accent={section.accent}>
       {config.imageUrl && (
-        <div className="cover-bg"><img src={config.imageUrl} alt={config.imageAlt ?? ''} /></div>
+        <div className="hero-img"><img src={config.imageUrl} alt={config.imageAlt ?? ''} /></div>
       )}
-      <div className="cover-frame">
-        {config.eyebrow && (
-          <div className="mg-caption vol-tag"><span className="mg-dot" /> {config.eyebrow}</div>
-        )}
-        <h1 className="cover-title mg-sfx">{config.heading}</h1>
-        {config.body && <p className="cover-sub">{config.body}</p>}
-        <ButtonRow buttons={config.buttons} />
+      <div className="hero-inner">
+        <div className="shell">
+          {config.eyebrow && <span className="chip chip--accent">{config.eyebrow}</span>}
+          <h1 className="hero-title">{config.heading}</h1>
+          {config.body && <p className="hero-body">{config.body}</p>}
+          <ButtonRow buttons={config.buttons} className="hero-btns" />
+        </div>
       </div>
     </section>
   );
 };
 
-const CtaPanel: React.FC<{ section: CustomSection }> = ({ section }) => {
+const AboutPoster: React.FC<{ section: CustomSection }> = ({ section }) => {
   const { config } = section;
   return (
-    <section className="join" data-accent={section.accent}>
-      {config.imageUrl && (
-        <div className="join-bg"><img src={config.imageUrl} alt={config.imageAlt ?? ''} /></div>
-      )}
-      <div className="join-inner">
-        {config.eyebrow && <div className="stamp">{config.eyebrow}</div>}
-        <h2 className="mg-sfx join-title">{config.heading}</h2>
-        {config.body && <p className="join-sub">{config.body}</p>}
-        <ButtonRow buttons={config.buttons} className="join-links" />
+    <section className="about" data-accent={section.accent}>
+      <div className="shell">
+        {config.eyebrow && <div className="about-eyebrow"><span className="chip chip--accent">{config.eyebrow}</span></div>}
+        <h1 className="about-title">{config.heading}</h1>
+        <div className="about-slab" />
+        <div className="about-grid">
+          <div>
+            <p className="about-text">{config.body}</p>
+            <ButtonRow buttons={config.buttons} className="about-btns" />
+          </div>
+          {config.imageUrl && (
+            <div className="about-img"><img src={config.imageUrl} alt={config.imageAlt ?? ''} /></div>
+          )}
+        </div>
+      </div>
+    </section>
+  );
+};
+
+const CtaBand: React.FC<{ section: CustomSection }> = ({ section }) => {
+  const { config } = section;
+  return (
+    <section className="cta" data-accent={section.accent}>
+      <div className="shell">
+        {config.eyebrow && <span className="chip">{config.eyebrow}</span>}
+        <h2 className="cta-title">{config.heading}</h2>
+        {config.body && <p className="cta-body">{config.body}</p>}
+        <ButtonRow buttons={config.buttons} className="cta-btns" />
       </div>
     </section>
   );
@@ -59,167 +90,159 @@ const PanelBlock: React.FC<{ section: CustomSection }> = ({ section }) => {
   const { config } = section;
   const layout = config.layout ?? 'text-only';
   return (
-    <section className={`panel-block panel-block--${layout}`} data-accent={section.accent}>
-      {config.badge && <div className="panel-block-badge">{config.badge}</div>}
-      {layout !== 'text-only' && config.imageUrl && (
-        <div className="panel-block-img">
-          <img src={config.imageUrl} alt={config.imageAlt ?? ''} />
-        </div>
-      )}
-      <div className="panel-block-body">
-        {config.eyebrow && <div className="mg-caption"><span className="mg-dot" /> {config.eyebrow}</div>}
-        {config.heading && <h2 className="mg-sfx panel-block-heading">{config.heading}</h2>}
-        {config.body && <p className="panel-block-text">{config.body}</p>}
-        <ButtonRow buttons={config.buttons} />
-      </div>
-    </section>
-  );
-};
-
-const MembersSectionView: React.FC<{ section: MembersSection; fileNo: number }> = ({ section, fileNo }) => {
-  const items = section.items ?? [];
-  return (
-    <section data-accent={section.accent}>
-      <div className="sect-hdr">
-        <div className="sect-ttl">{section.title || 'THE CLUB'}</div>
-        <div className="sect-meta">
-          <div className="sect-id">FILE // {String(fileNo).padStart(3, '0')}</div>
-          <div className="sect-count">{String(items.length).padStart(2, '0')} PROFILES</div>
-        </div>
-      </div>
-      {section.subtitle && <p className="sect-sub">{section.subtitle}</p>}
-
-      <div className="collage">
-        {items.map((m) => (
-          <div key={m.id} className={`cast-panel mg-panel cast-panel--${m.size}`}>
-            <div className="cast-img-wrap">
-              <span className="cast-role-tag">{m.role}</span>
-              {m.img_url && <img src={m.img_url} alt={m.name} />}
-            </div>
-            <div className="cast-body">
-              <div className="cast-name mg-sfx">{m.name}</div>
-              {m.quote && <p className="cast-quote">{m.quote}</p>}
-              {m.stats.length > 0 && (
-                <div className="cast-gauges">
-                  {m.stats.map((s, j) => (
-                    <span className="gauge" key={j}>
-                      <GaugeDial value={s.value} />
-                      {s.label}
-                    </span>
-                  ))}
-                </div>
-              )}
-            </div>
+    <section className="sec" data-accent={section.accent}>
+      <div className="shell">
+        <div className={`block block--${layout}`}>
+          {config.badge && <div className="block-badge">{config.badge}</div>}
+          {layout !== 'text-only' && config.imageUrl && (
+            <div className="block-img"><img src={config.imageUrl} alt={config.imageAlt ?? ''} /></div>
+          )}
+          <div className="block-body">
+            {config.eyebrow && <span className="chip chip--accent">{config.eyebrow}</span>}
+            {config.heading && <h2 className="block-heading">{config.heading}</h2>}
+            {config.body && <p className="block-text">{config.body}</p>}
+            <ButtonRow buttons={config.buttons} className="block-btns" />
           </div>
-        ))}
+        </div>
       </div>
     </section>
   );
 };
 
-const EventsSectionView: React.FC<{ section: EventsSection; fileNo: number }> = ({ section, fileNo }) => {
+const ClubsView: React.FC<{ section: ClubsSection; fileNo: number }> = ({ section, fileNo }) => {
   const items = section.items ?? [];
   return (
-    <section data-accent={section.accent}>
-      <div className="sect-hdr">
-        <div className="sect-ttl">{section.title || 'ROADMAP'}</div>
-        <div className="sect-meta">
-          <div className="sect-id">FILE // {String(fileNo).padStart(3, '0')}</div>
-          <div className="sect-count">{items.length} STOPS</div>
-        </div>
-      </div>
-      {section.subtitle && <p className="sect-sub">{section.subtitle}</p>}
-
-      <div className="roadmap">
-        {items.map((t) => (
-          <div className="roadmap-item" key={t.id}>
-            <div className="roadmap-dot" />
-            <div className="roadmap-card mg-panel">
-              <div className="roadmap-card-hdr">
-                <span className="roadmap-chapter">#{t.chapter}</span>
-                <span className="roadmap-tag">{t.tag}</span>
-                <span className="roadmap-date">{t.date_label}</span>
-              </div>
-              <h3 className="roadmap-title mg-sfx">{t.title}</h3>
-              <p className="roadmap-desc">{t.description}</p>
-            </div>
+    <section className="sec" data-accent={section.accent}>
+      <SectionBand section={section} fileNo={fileNo} />
+      <div className="sec-body">
+        <div className="shell">
+          <div className="club-grid">
+            {items.map((c) => {
+              const count = c.members?.length ?? 0;
+              return (
+                <Link
+                  key={c.id}
+                  to={`/club/${c.slug}`}
+                  className="club-tile"
+                  style={{ '--tile-accent': `var(--${c.accent})` } as React.CSSProperties}
+                >
+                  {c.img_url && (
+                    <div className="club-tile-img"><img src={c.img_url} alt="" /></div>
+                  )}
+                  <div className="club-tile-body">
+                    <span className="club-tile-count">{count} member{count === 1 ? '' : 's'}</span>
+                    <div className="club-tile-name">{c.name}</div>
+                    {c.tagline && <p className="club-tile-tag">{c.tagline}</p>}
+                    <div className="club-tile-go">See the club →</div>
+                  </div>
+                </Link>
+              );
+            })}
           </div>
-        ))}
-      </div>
-    </section>
-  );
-};
-
-const ClubsSectionView: React.FC<{ section: ClubsSection; fileNo: number }> = ({ section, fileNo }) => {
-  const items = section.items ?? [];
-  return (
-    <section data-accent={section.accent}>
-      <div className="sect-hdr">
-        <div className="sect-ttl">{section.title || 'CLUBS'}</div>
-        <div className="sect-meta">
-          <div className="sect-id">FILE // {String(fileNo).padStart(3, '0')}</div>
-          <div className="sect-count">{items.length} CLUBS</div>
         </div>
       </div>
-      {section.subtitle && <p className="sect-sub">{section.subtitle}</p>}
+    </section>
+  );
+};
 
-      <div className="teaser-grid">
-        {items.map((c) => (
-          <Link
-            key={c.id}
-            to={`/club/${c.slug}`}
-            className={`teaser-card${c.img_url ? ' teaser-card--img' : ''}`}
-            style={{ '--card-accent': `var(--${c.accent})` } as React.CSSProperties}
-          >
-            {c.img_url && (
-              <div className="teaser-card-img"><img src={c.img_url} alt="" /></div>
-            )}
-            <span className="teaser-eyebrow">{(c.members?.length ?? 0)} MEMBER{(c.members?.length ?? 0) === 1 ? '' : 'S'}</span>
-            <div className="teaser-title mg-sfx">{c.name}</div>
-            {c.tagline && <p className="teaser-sub">{c.tagline}</p>}
-            <span className="teaser-go">SEE THE CLUB →</span>
-          </Link>
-        ))}
+export const RoadmapList: React.FC<{ items: NonNullable<EventsSection['items']> }> = ({ items }) => (
+  <div className="road">
+    {items.map((t, i) => (
+      <div className="road-row" key={t.id}>
+        <div className="road-num">{t.chapter || String(i + 1).padStart(2, '0')}</div>
+        <div>
+          <h3 className="road-title">{t.title}</h3>
+          <div className="road-meta">
+            {t.tag && <span className="chip chip--accent">{t.tag}</span>}
+          </div>
+          {t.description && <p className="road-desc">{t.description}</p>}
+        </div>
+        <div className="road-date">{t.date_label}</div>
+      </div>
+    ))}
+  </div>
+);
+
+const EventsView: React.FC<{ section: EventsSection; fileNo: number }> = ({ section, fileNo }) => {
+  const items = section.items ?? [];
+  return (
+    <section className="sec" data-accent={section.accent}>
+      <SectionBand section={section} fileNo={fileNo} />
+      <div className="sec-body">
+        <div className="shell">
+          <RoadmapList items={items} />
+        </div>
       </div>
     </section>
   );
 };
 
-const StatsSectionView: React.FC<{ section: StatsSection; fileNo: number }> = ({ section, fileNo }) => {
+export const CrewGrid: React.FC<{ items: NonNullable<MembersSection['items']> }> = ({ items }) => (
+  <div className="crew">
+    {items.map((m) => (
+      <div key={m.id} className={`crew-card crew-card--${m.size}`}>
+        <div className="crew-img">
+          <span className="crew-role">{m.role}</span>
+          {m.img_url && <img src={m.img_url} alt={m.name} />}
+        </div>
+        <div className="crew-body">
+          <div className="crew-name">{m.name}</div>
+          {m.quote && <p className="crew-quote">{m.quote}</p>}
+          {m.stats.length > 0 && (
+            <div className="crew-stats">
+              {m.stats.map((s, j) => (
+                <span className="gauge" key={j}>
+                  <span className="gauge-dial">{s.value}</span>
+                  {s.label}
+                </span>
+              ))}
+            </div>
+          )}
+        </div>
+      </div>
+    ))}
+  </div>
+);
+
+const MembersView: React.FC<{ section: MembersSection; fileNo: number }> = ({ section, fileNo }) => {
+  const items = section.items ?? [];
+  return (
+    <section className="sec" data-accent={section.accent}>
+      <SectionBand section={section} fileNo={fileNo} />
+      <div className="sec-body">
+        <div className="shell">
+          <CrewGrid items={items} />
+        </div>
+      </div>
+    </section>
+  );
+};
+
+const StatsView: React.FC<{ section: StatsSection; fileNo: number }> = ({ section, fileNo }) => {
   const { stats, badges } = section.config;
   return (
-    <section data-accent={section.accent}>
-      <div className="sect-hdr">
-        <div className="sect-ttl">{section.title || 'STATS'}</div>
-        <div className="sect-meta">
-          <div className="sect-id">FILE // {String(fileNo).padStart(3, '0')}</div>
-          <div className="sect-count">GUILD STATS</div>
-        </div>
-      </div>
-      {section.subtitle && <p className="sect-sub">{section.subtitle}</p>}
-
-      <div className="status-window">
-        <div className="status-col">
-          <div className="status-heading mg-sfx">STATS</div>
-          {stats.map((s, i) => (
-            <div className="status-row" key={i}>
-              <span className="status-num">{s.value}</span>
-              <span className="status-lbl">{s.label}</span>
-            </div>
-          ))}
-        </div>
-        <div className="status-divider" />
-        <div className="status-col">
-          <div className="status-heading mg-sfx">ACHIEVEMENTS</div>
-          <div className="badges">
-            {badges.map((b, i) => (
-              <div className={`badge badge--${b.rarity}`} key={i}>
-                <div className="badge-icon">{b.icon}</div>
-                <span className="badge-rarity">{b.rarity}</span>
-                <span>{b.label}</span>
+    <section className="sec" data-accent={section.accent}>
+      <SectionBand section={section} fileNo={fileNo} />
+      <div className="sec-body">
+        <div className="shell">
+          <div className="stat-grid">
+            {stats.map((s, i) => (
+              <div className="stat-block" key={i}>
+                <div className="stat-num">{s.value}</div>
+                <div className="stat-lbl">{s.label}</div>
               </div>
             ))}
           </div>
+          {badges.length > 0 && (
+            <div className="badge-grid">
+              {badges.map((b, i) => (
+                <div className={`badge-tile badge-tile--${b.rarity}`} key={i}>
+                  <div className="badge-tile-icon">{b.icon}</div>
+                  {b.label}
+                </div>
+              ))}
+            </div>
+          )}
         </div>
       </div>
     </section>
@@ -229,16 +252,17 @@ const StatsSectionView: React.FC<{ section: StatsSection; fileNo: number }> = ({
 export const SectionRenderer: React.FC<{ section: Section; fileNo: number }> = ({ section, fileNo }) => {
   switch (section.type) {
     case 'members':
-      return <MembersSectionView section={section} fileNo={fileNo} />;
+      return <MembersView section={section} fileNo={fileNo} />;
     case 'events':
-      return <EventsSectionView section={section} fileNo={fileNo} />;
+      return <EventsView section={section} fileNo={fileNo} />;
     case 'clubs':
-      return <ClubsSectionView section={section} fileNo={fileNo} />;
+      return <ClubsView section={section} fileNo={fileNo} />;
     case 'stats':
-      return <StatsSectionView section={section} fileNo={fileNo} />;
+      return <StatsView section={section} fileNo={fileNo} />;
     case 'custom':
-      if (section.config.variant === 'hero') return <HeroPanel section={section} />;
-      if (section.config.variant === 'cta') return <CtaPanel section={section} />;
+      if (section.config.variant === 'hero') return <HeroPoster section={section} />;
+      if (section.config.variant === 'about') return <AboutPoster section={section} />;
+      if (section.config.variant === 'cta') return <CtaBand section={section} />;
       return <PanelBlock section={section} />;
     default:
       return null;

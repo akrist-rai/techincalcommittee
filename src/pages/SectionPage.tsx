@@ -20,7 +20,7 @@ export const SectionPage: React.FC = () => {
     return (
       <div className="page-not-found">
         <Link className="page-back" to="/">← back home</Link>
-        <h1 className="mg-sfx">404. THIS PAGE GHOSTED US.</h1>
+        <h1>404. This page ghosted us.</h1>
       </div>
     );
   }

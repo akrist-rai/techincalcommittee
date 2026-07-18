@@ -30,7 +30,6 @@ const PublicLayoutInner: React.FC = () => {
       </main>
       <footer className="footer">
         <div className="shell">
-          <div className="footer-word" aria-hidden="true">Technical Committee</div>
           <div className="footer-row">
             <Link to="/admin/login">Committee login</Link>
           </div>

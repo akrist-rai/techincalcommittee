@@ -18,6 +18,18 @@ export const Signup: React.FC = () => {
 
   if (!loading && user) return <Navigate to="/admin" replace />;
 
+  if (!token) {
+    return (
+      <div className="admin-auth-screen">
+        <div className="admin-auth-card">
+          <div className="admin-auth-title">TECHNICAL COMMITTEE</div>
+          <p className="admin-auth-sub">this link is missing its access token — use the exact link you were given.</p>
+          <a className="admin-back-link" href="/admin/login">back to login</a>
+        </div>
+      </div>
+    );
+  }
+
   const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);

@@ -3,21 +3,8 @@ import { Link, Outlet } from 'react-router-dom';
 import { SiteDataProvider, useSiteData } from '../lib/site-data-context';
 import { Nav, type PageNavLink } from '../components/Nav';
 import { Ambient } from '../components/Ambient';
-import { Boot } from '../components/Boot';
 
 const NAV_EXCLUDED_VARIANTS = new Set(['hero', 'about']);
-
-const MARQUEE_TEXT = 'Technical Committee ✦ Build · Break · Rebuild ✦ ';
-
-const Marquee: React.FC = () => {
-  // two copies of the same run so the -50% keyframe loops seamlessly
-  const run = Array.from({ length: 6 }, (_, i) => <span key={i}>{MARQUEE_TEXT}</span>);
-  return (
-    <div className="marquee" aria-hidden="true">
-      <div className="marquee-track">{run}{run.map((s, i) => <span key={`b${i}`}>{MARQUEE_TEXT}</span>)}</div>
-    </div>
-  );
-};
 
 const PublicLayoutInner: React.FC = () => {
   const { sections, anchors, error } = useSiteData();
@@ -38,7 +25,6 @@ const PublicLayoutInner: React.FC = () => {
     <>
       <Ambient />
       <Nav links={navLinks} />
-      <Marquee />
       <main className="page">
         <Outlet />
       </main>
@@ -50,7 +36,6 @@ const PublicLayoutInner: React.FC = () => {
           </div>
         </div>
       </footer>
-      <Boot />
     </>
   );
 };

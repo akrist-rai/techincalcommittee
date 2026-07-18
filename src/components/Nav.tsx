@@ -8,56 +8,64 @@ export interface PageNavLink {
   label: string;
 }
 
+// Fight Club's own nav is a fixed side index + a purely-atmospheric corner
+// HUD — no top bar, no logo lockup. This mirrors that: a vertical numbered
+// index on desktop, a HUD frame for identity/wayfinding, and — since this
+// is a real multi-page site and not a one-scroll tribute page — a small
+// burger that opens the full-screen menu on narrow screens where the side
+// index hides.
 export const Nav: React.FC<{ links: PageNavLink[] }> = ({ links }) => {
   const [open, setOpen] = useState(false);
-  const [scrolled, setScrolled] = useState(false);
   const location = useLocation();
 
-  // close the overlay on route change and lock body scroll while it's open
   useEffect(() => { setOpen(false); }, [location.pathname]);
   useEffect(() => {
     document.body.style.overflow = open ? 'hidden' : '';
     return () => { document.body.style.overflow = ''; };
   }, [open]);
 
-  useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 8);
-    onScroll();
-    window.addEventListener('scroll', onScroll, { passive: true });
-    return () => window.removeEventListener('scroll', onScroll);
-  }, []);
-
   return (
     <>
-      <header className={`bar${scrolled ? ' bar--scrolled' : ''}`}>
-        <Link className="bar-logo" to="/">
-          <span className="bar-mark glitch" data-text="TC">TC</span>
-          <span className="bar-word">Technical<br />Committee</span>
-        </Link>
-        <nav className="bar-nav" aria-label="Primary">
-          {links.map((l) => (
-            <NavLink key={l.to} className={({ isActive }) => `bar-link${isActive ? ' active' : ''}`} to={l.to}>
-              {l.label}
+      <div className="hud" aria-hidden="true">
+        <div className="br-corner tlc" /><div className="br-corner trc" />
+        <div className="br-corner blc" /><div className="br-corner brc" />
+      </div>
+      <Link className="hud-home" to="/">TECHNICAL COMMITTEE</Link>
+
+      <nav className="idx" aria-label="Primary">
+        <ul>
+          <li>
+            <NavLink to="/" end className={({ isActive }) => (isActive ? 'on' : undefined)}>
+              <span>00</span> Home
             </NavLink>
+          </li>
+          {links.map((l, i) => (
+            <li key={l.to}>
+              <NavLink to={l.to} className={({ isActive }) => (isActive ? 'on' : undefined)}>
+                <span>{String(i + 1).padStart(2, '0')}</span> {l.label}
+              </NavLink>
+            </li>
           ))}
-        </nav>
-        <a className="bar-cta" href={EPHEMERAL_URL}>
-          <span>Enter Ephemeral</span>
-          <span className="bar-cta-arrow" aria-hidden="true">→</span>
-        </a>
-        <button
-          type="button"
-          className={`bar-burger${open ? ' is-open' : ''}`}
-          aria-expanded={open}
-          aria-controls="site-menu"
-          aria-label="Open menu"
-          onClick={() => setOpen(true)}
-        >
-          <span className="bar-burger-lines" aria-hidden="true">
-            <span /><span /><span />
-          </span>
-        </button>
-      </header>
+          <li>
+            <a className="idx-cta" href={EPHEMERAL_URL}>
+              <span>→</span> Enter Ephemeral
+            </a>
+          </li>
+        </ul>
+      </nav>
+
+      <button
+        type="button"
+        className="nav-burger"
+        aria-expanded={open}
+        aria-controls="site-menu"
+        aria-label="Open menu"
+        onClick={() => setOpen(true)}
+      >
+        <span className="burger-lines" aria-hidden="true">
+          <span /><span /><span />
+        </span>
+      </button>
 
       {open && (
         <div id="site-menu" className="menu-overlay" role="dialog" aria-modal="true" aria-label="Menu">
